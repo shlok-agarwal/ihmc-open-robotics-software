@@ -206,6 +206,7 @@ public class IHMCCommunicationKryoNetClassList extends NetClassList
 
       // Video data
       registerPacketClass(VideoPacket.class);
+      registerPacketField(VideoPacket.class);
       registerPacketClass(SimulatedLidarScanPacket.class);
       registerPacketField(IntrinsicParametersMessage.class);
       registerPacketField(LidarScanParametersMessage.class);
