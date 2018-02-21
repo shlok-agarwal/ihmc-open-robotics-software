@@ -58,7 +58,7 @@ import us.ihmc.humanoidRobotics.communication.packets.sensing.VideoPacket;
 import us.ihmc.humanoidRobotics.communication.packets.walking.SnapFootstepPacket;
 import us.ihmc.humanoidRobotics.communication.packets.wholebody.MessageOfMessages;
 import us.ihmc.humanoidRobotics.kryo.IHMCCommunicationKryoNetClassList;
-import us.ihmc.idl.PreallocatedList;
+import us.ihmc.idl.TempPreallocatedList;
 import us.ihmc.sensorProcessing.communication.packets.dataobjects.AtlasAuxiliaryRobotData;
 
 @ContinuousIntegrationPlan(categories = IntegrationCategory.HEALTH)
@@ -70,7 +70,7 @@ public class PacketCodeQualityTest
    @SuppressWarnings("rawtypes")
    @ContinuousIntegrationTest(estimatedDuration = 4.0, categoriesOverride = IntegrationCategory.FAST)
    @Test(timeout = Integer.MAX_VALUE)
-   public void testPacketsUsePreallocatedListOnly()
+   public void testPacketsUseTempPreallocatedListOnly()
    { // This test won't fail on Arrays or Lists
       boolean verbose = true;
 
@@ -265,7 +265,7 @@ public class PacketCodeQualityTest
 
                Class<?> typeToCheck = field.getType();
 
-               if (PreallocatedList.class.isAssignableFrom(typeToCheck))
+               if (TempPreallocatedList.class.isAssignableFrom(typeToCheck))
                {
                   Packet packetInstance = packetType.newInstance();
                   Object fieldInstance = field.get(packetInstance);
@@ -759,7 +759,7 @@ public class PacketCodeQualityTest
    {
       thirdPartySerializableClasses.add(List.class);
       thirdPartySerializableClasses.add(ArrayList.class);
-      thirdPartySerializableClasses.add(PreallocatedList.class);
+      thirdPartySerializableClasses.add(TempPreallocatedList.class);
       thirdPartySerializableClasses.add(TByteArrayList.class);
       thirdPartySerializableClasses.add(TFloatArrayList.class);
       thirdPartySerializableClasses.add(TDoubleArrayList.class);

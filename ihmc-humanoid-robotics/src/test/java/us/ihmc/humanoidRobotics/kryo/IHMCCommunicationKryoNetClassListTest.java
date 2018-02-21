@@ -12,7 +12,7 @@ import java.util.Set;
 import org.junit.Test;
 
 import us.ihmc.communication.packets.Packet;
-import us.ihmc.idl.PreallocatedList;
+import us.ihmc.idl.TempPreallocatedList;
 
 public class IHMCCommunicationKryoNetClassListTest
 {
@@ -77,7 +77,7 @@ public class IHMCCommunicationKryoNetClassListTest
       if (typeToCheck.isPrimitive() || typeToCheck == Class.class || typeToCheck == String.class)
          return;
 
-      if (PreallocatedList.class.isAssignableFrom(typeToCheck))
+      if (TempPreallocatedList.class.isAssignableFrom(typeToCheck))
       {
          if (fieldInstance == null)
             return;
