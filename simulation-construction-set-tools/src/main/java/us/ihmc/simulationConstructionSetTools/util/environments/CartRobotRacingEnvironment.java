@@ -28,6 +28,14 @@ public class CartRobotRacingEnvironment implements CommonAvatarEnvironmentInterf
          combinedTerrainObject.addBox(-0.5 * plateSize + plateSize * i, -0.5 * plateSize, 0.5 * plateSize + plateSize * i, 0.5 * plateSize,
                                       -plateThickness - plateHeightGap * i, -plateHeightGap * i);
       }
+      
+      combinedTerrainObject.addRamp(0.8, -0.7, 2.0, 0.7, 0.5);
+      
+      combinedTerrainObject.addRamp(-5.0, -1.0, -3.0, 1.0, 0.5);
+      
+      combinedTerrainObject.addRamp(5.0, -1.0, 3.0, 1.0, 0.5);
+      
+      combinedTerrainObject.addRamp(8.0, -1.0, 6.0, 1.0, -0.5);
 
       //      RigidBodyTransform robotTransform = new RigidBodyTransform();
       //      ContactableCylinderRobot envRobot = new ContactableCylinderRobot("cylinderRobot", robotTransform, 0.2, 1.0, 100);
