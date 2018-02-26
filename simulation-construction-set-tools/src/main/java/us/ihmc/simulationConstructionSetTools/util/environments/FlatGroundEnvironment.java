@@ -15,7 +15,7 @@ public class FlatGroundEnvironment implements CommonAvatarEnvironmentInterface
 
    public FlatGroundEnvironment()
    {
-      flatGround = DefaultCommonAvatarEnvironment.setUpGround("Ground");      
+      flatGround = DefaultCommonAvatarEnvironment.setUpGround("Ground");
    }
 
    public void addEnvironmentRobot(Robot robot)
@@ -26,10 +26,7 @@ public class FlatGroundEnvironment implements CommonAvatarEnvironmentInterface
    @Override
    public TerrainObject3D getTerrainObject3D()
    {
-      CartRobotRacingEnvironment env = new CartRobotRacingEnvironment();
-      
-      return env.getTerrainObject3D();
-      //return flatGround;
+      return flatGround;
    }
 
    @Override
