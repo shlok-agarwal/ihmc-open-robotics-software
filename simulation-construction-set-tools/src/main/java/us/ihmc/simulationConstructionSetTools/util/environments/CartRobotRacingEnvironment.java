@@ -3,6 +3,7 @@ package us.ihmc.simulationConstructionSetTools.util.environments;
 import java.util.ArrayList;
 import java.util.List;
 
+import us.ihmc.graphicsDescription.appearance.YoAppearance;
 import us.ihmc.simulationConstructionSetTools.util.environments.environmentRobots.ContactableCylinderRobot;
 import us.ihmc.simulationconstructionset.ExternalForcePoint;
 import us.ihmc.simulationconstructionset.Robot;
@@ -29,7 +30,7 @@ public class CartRobotRacingEnvironment implements CommonAvatarEnvironmentInterf
                                       -plateThickness - plateHeightGap * i, -plateHeightGap * i);
       }
       
-      combinedTerrainObject.addRamp(0.8, -0.7, 2.0, 0.7, 0.5);
+      combinedTerrainObject.addRamp(0.8, -0.7, 2.0, 0.7, 0.5, YoAppearance.AliceBlue());
       
       combinedTerrainObject.addRamp(-5.0, -1.0, -3.0, 1.0, 0.5);
       

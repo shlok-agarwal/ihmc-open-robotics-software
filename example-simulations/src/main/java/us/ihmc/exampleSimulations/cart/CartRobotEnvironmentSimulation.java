@@ -78,7 +78,6 @@ public class CartRobotEnvironmentSimulation
       scs.initializeCollisionDetector(collisionVisualizer, collisionHandler);
       scs.addEnvironmentCollisionShapes(environment.getTerrainObject3D().getSimpleShapes());
       scs.initializeCollisionHandler(collisionVisualizer, collisionHandler);
-      //aaaa
 
       scs.setDT(dt, 1);
       scs.setFastSimulate(true);
