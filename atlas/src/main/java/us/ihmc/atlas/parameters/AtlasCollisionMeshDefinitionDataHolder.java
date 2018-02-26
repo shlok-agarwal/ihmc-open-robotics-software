@@ -17,7 +17,7 @@ public class AtlasCollisionMeshDefinitionDataHolder extends CollisionMeshDefinit
    public AtlasCollisionMeshDefinitionDataHolder(AtlasJointMap jointMap)
    {
       RigidBodyTransform transformToAnkle = new RigidBodyTransform();
-      transformToAnkle.appendTranslation(0.04, 0, -0.08);
+      transformToAnkle.appendTranslation(0.04, 0, -0.05);
 
       CollisionMeshDefinitionData rightFootCollisionMeshData = new BoxCollisionMeshDefinitionData(jointMap.getLegJointName(RobotSide.RIGHT,
                                                                                                                            LegJointName.ANKLE_ROLL),
