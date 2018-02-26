@@ -4593,8 +4593,8 @@ public class SimulationConstructionSet implements Runnable, YoVariableHolder, Ru
    {
       for (int i = 0; i < simpleShapes.size(); i++)
       {
-         System.out.println(
-                            "[" + i + "] Env is successfully added " + simpleShapes.get(i));
+//         System.out.println(
+//                            "[" + i + "] Env is successfully added " + simpleShapes.get(i));
          mySimulation.addEnvironmentCollisionShapes(simpleShapes.get(i));
       }
    }
