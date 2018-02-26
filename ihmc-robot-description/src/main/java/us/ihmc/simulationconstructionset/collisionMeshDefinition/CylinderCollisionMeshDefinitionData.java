@@ -2,8 +2,8 @@ package us.ihmc.simulationconstructionset.collisionMeshDefinition;
 
 public class CylinderCollisionMeshDefinitionData extends CollisionMeshDefinitionData
 {
-   private double radius = 1.0;
-   private double height = 2.0;
+   private double radius = 0.0;
+   private double height = 0.0;
 
    public CylinderCollisionMeshDefinitionData(String parentJointName)
    {

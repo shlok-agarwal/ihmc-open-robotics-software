@@ -2,9 +2,9 @@ package us.ihmc.simulationconstructionset.collisionMeshDefinition;
 
 public class BoxCollisionMeshDefinitionData extends CollisionMeshDefinitionData
 {
-   private double length = 1.0;
-   private double width = 1.0;
-   private double height = 1.0;
+   private double length = 0.0;
+   private double width = 0.0;
+   private double height = 0.0;
 
    public BoxCollisionMeshDefinitionData(String parentJointName)
    {

@@ -2,7 +2,7 @@ package us.ihmc.simulationconstructionset.collisionMeshDefinition;
 
 public class SphereCollisionMeshDefinitionData extends CollisionMeshDefinitionData
 {
-   private double radius = 1.0;
+   private double radius = 0.0;
 
    public SphereCollisionMeshDefinitionData(String parentJointName)
    {
