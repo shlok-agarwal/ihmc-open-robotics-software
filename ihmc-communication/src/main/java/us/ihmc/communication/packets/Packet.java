@@ -1,7 +1,5 @@
 package us.ihmc.communication.packets;
 
-import com.esotericsoftware.kryo.serializers.FieldSerializer.Optional;
-
 import us.ihmc.communication.ros.generators.RosExportedField;
 import us.ihmc.communication.ros.generators.RosIgnoredField;
 import us.ihmc.euclid.interfaces.EpsilonComparable;
@@ -72,15 +70,5 @@ public abstract class Packet<T extends Packet<T>> implements EpsilonComparable<T
    public boolean isClonable()
    {
       return true;
-   }
-
-   /**
-    * Check the data held in that message.
-    * It returns "null" if no error detected, otherwise it returns the error message.
-    * The controller uses this validation to detect bad messages to throw away and report the error to the user.
-    */
-   public String validateMessage()
-   {
-      return null;
    }
 }

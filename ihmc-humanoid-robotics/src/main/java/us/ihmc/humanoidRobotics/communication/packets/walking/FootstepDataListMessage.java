@@ -11,7 +11,6 @@ import us.ihmc.communication.ros.generators.RosMessagePacket;
 import us.ihmc.euclid.referenceFrame.FrameQuaternion;
 import us.ihmc.euclid.referenceFrame.ReferenceFrame;
 import us.ihmc.euclid.tuple4D.Quaternion;
-import us.ihmc.humanoidRobotics.communication.packets.PacketValidityChecker;
 import us.ihmc.idl.TempPreallocatedList;
 import us.ihmc.robotics.robotSide.RobotSide;
 
@@ -64,7 +63,6 @@ public class FootstepDataListMessage extends Packet<FootstepDataListMessage>
     */
    public FootstepDataListMessage()
    {
-      setUniqueId(VALID_MESSAGE_DEFAULT_ID);
    }
 
    public FootstepDataListMessage(FootstepDataListMessage other)
@@ -220,12 +218,5 @@ public class FootstepDataListMessage extends Packet<FootstepDataListMessage>
    public QueueableMessage getQueueingProperties()
    {
       return queueingProperties;
-   }
-
-   /** {@inheritDoc} */
-   @Override
-   public String validateMessage()
-   {
-      return PacketValidityChecker.validateFootstepDataListMessage(this);
    }
 }
