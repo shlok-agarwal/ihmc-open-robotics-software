@@ -320,8 +320,6 @@ public abstract class EndToEndPelvisTrajectoryMessageTest implements MultiRobotT
          robotSide = robotSide.getOppositeSide();
          previousFootStep = footStep;
       }
-      footsteps.queueingProperties.setExecutionMode(ExecutionMode.OVERRIDE.toByte());
-      footsteps.queueingProperties.setPreviousMessageId(FootstepDataListMessage.VALID_MESSAGE_DEFAULT_ID);
 
       return footsteps;
    }
