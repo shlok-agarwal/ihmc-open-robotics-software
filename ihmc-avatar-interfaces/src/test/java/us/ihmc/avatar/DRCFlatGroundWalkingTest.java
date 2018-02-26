@@ -62,7 +62,7 @@ public abstract class DRCFlatGroundWalkingTest implements MultiRobotTestInterfac
    @After
    public void destroySimulationAndRecycleMemory()
    {
-      if (simulationTestingParameters.getKeepSCSUp())
+      if (true)
       {
          ThreadTools.sleepForever();
       }
