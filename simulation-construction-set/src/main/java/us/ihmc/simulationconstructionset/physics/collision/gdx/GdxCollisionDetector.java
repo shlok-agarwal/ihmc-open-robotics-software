@@ -169,7 +169,7 @@ public class GdxCollisionDetector implements ScsCollisionDetector
          if (!(shape3D instanceof Capsule3D))
             return createCapsule(shape3D);
 
-         throw new RuntimeException("There is no matched simple shape Box3D, Sphere3D, Cylinder3D, Capsule3D");
+         throw new RuntimeException("There is no matched among the simple shape Box3D, Sphere3D, Cylinder3D, Capsule3D");
       }
 
       private CollisionShapeDescription createBox(Shape3D shape3D)

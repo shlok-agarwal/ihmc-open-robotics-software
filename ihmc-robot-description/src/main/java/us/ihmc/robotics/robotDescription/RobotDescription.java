@@ -117,20 +117,21 @@ public class RobotDescription implements RobotDescriptionNode, GraphicsObjectsHo
       for (int i = 0; i < numberOfDefinitionData; i++)
       {
          // TODO : get rid of the field, type.
-         switch (collisionMeshDefinitionDataList.get(i).getCollisionMeshType())
+         if(collisionMeshDefinitionDataList.get(i) instanceof SphereCollisionMeshDefinitionData)
          {
-         case SPHERE:
             addSphereCollisionMeshDefinitionData((SphereCollisionMeshDefinitionData) collisionMeshDefinitionDataList.get(i));
-            break;
-         case CYLINDER:
+         }
+         else if(collisionMeshDefinitionDataList.get(i) instanceof CylinderCollisionMeshDefinitionData)
+         {
             addCylinderCollisionMeshDefinitionData((CylinderCollisionMeshDefinitionData) collisionMeshDefinitionDataList.get(i));
-            break;
-         case BOX:
+         }
+         else if(collisionMeshDefinitionDataList.get(i) instanceof BoxCollisionMeshDefinitionData)
+         {
             addBoxCollisionMeshDefinitionData((BoxCollisionMeshDefinitionData) collisionMeshDefinitionDataList.get(i));
-            break;
-         default:
-            // TODO throw exception.
-            break;
+         }
+         else
+         {
+            throw new RuntimeException("There is no matched among the simple shape Box3D, Sphere3D, Cylinder3D, Capsule3D");
          }
       }
    }

@@ -7,13 +7,11 @@ public class SphereCollisionMeshDefinitionData extends CollisionMeshDefinitionDa
    public SphereCollisionMeshDefinitionData(String parentJointName)
    {
       super(parentJointName);
-      setCollisionMeshType(CollisionMeshType.SPHERE);
    }
 
    public SphereCollisionMeshDefinitionData(String parentJointName, double radius)
    {
       super(parentJointName);
-      setCollisionMeshType(CollisionMeshType.SPHERE);
       this.radius = radius;
    }
 

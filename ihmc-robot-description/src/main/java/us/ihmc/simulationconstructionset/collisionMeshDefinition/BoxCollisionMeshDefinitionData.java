@@ -9,13 +9,11 @@ public class BoxCollisionMeshDefinitionData extends CollisionMeshDefinitionData
    public BoxCollisionMeshDefinitionData(String parentJointName)
    {
       super(parentJointName);
-      setCollisionMeshType(CollisionMeshType.BOX);
    }
 
    public BoxCollisionMeshDefinitionData(String parentJointName, double length, double width, double height)
    {
       super(parentJointName);
-      setCollisionMeshType(CollisionMeshType.BOX);
       this.length = length;
       this.width = width;
       this.height = height;
