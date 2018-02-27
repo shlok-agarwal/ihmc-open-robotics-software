@@ -30,7 +30,7 @@ public class FallingBoxSimulation
 
    static Point3D initialPositionOne = new Point3D(0.0, -0.5 * gapOfTwoRobots, heightOfTwoRobots);
    static Point3D initialPositionTwo = new Point3D(0.0, 0.5 * gapOfTwoRobots, heightOfTwoRobots);
-   static Vector3D initialOrientationAxisAngle = new Vector3D(0.0, 0.0, Math.PI * 0.5);
+   static Vector3D initialOrientationAxisAngle = new Vector3D(0.0, Math.PI * 0.1, 0.0);
    static Quaternion initialOrientation = new Quaternion(initialOrientationAxisAngle);
 
    static Box3D box = new Box3D(0.5, 0.3, 0.15);
