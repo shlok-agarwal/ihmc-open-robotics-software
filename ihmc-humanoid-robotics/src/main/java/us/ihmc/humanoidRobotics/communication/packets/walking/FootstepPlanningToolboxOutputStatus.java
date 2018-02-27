@@ -2,12 +2,10 @@ package us.ihmc.humanoidRobotics.communication.packets.walking;
 
 import us.ihmc.communication.packets.MessageTools;
 import us.ihmc.communication.packets.Packet;
-import us.ihmc.communication.packets.PlanarRegionMessageConverter;
 import us.ihmc.communication.packets.PlanarRegionsListMessage;
 import us.ihmc.euclid.geometry.Pose2D;
 import us.ihmc.euclid.tuple2D.Point2D;
 import us.ihmc.idl.TempPreallocatedList;
-import us.ihmc.robotics.geometry.PlanarRegionsList;
 
 public class FootstepPlanningToolboxOutputStatus extends Packet<FootstepPlanningToolboxOutputStatus>
 {
@@ -73,7 +71,6 @@ public class FootstepPlanningToolboxOutputStatus extends Packet<FootstepPlanning
       footstepDataList.set(other.footstepDataList);
       footstepDataList.defaultSwingDuration = other.footstepDataList.defaultSwingDuration;
       footstepDataList.defaultTransferDuration = other.footstepDataList.defaultTransferDuration;
-      footstepDataList.uniqueId = other.footstepDataList.uniqueId;
       planarRegionsList = other.planarRegionsList;
       bodyPath = other.bodyPath;
       lowLevelPlannerGoal = other.lowLevelPlannerGoal;
