@@ -111,23 +111,23 @@ public class RobotDescription implements RobotDescriptionNode, GraphicsObjectsHo
 
    public void addCollisionMeshDefinitionData(CollisionMeshDefinitionDataHolder collisionMeshDefinitionDataHolder)
    {
+      boolean isVisible = collisionMeshDefinitionDataHolder.isVisible();
       List<CollisionMeshDefinitionData> collisionMeshDefinitionDataList = collisionMeshDefinitionDataHolder.getCollisionMeshDefinitionData();
       int numberOfDefinitionData = collisionMeshDefinitionDataList.size();
 
       for (int i = 0; i < numberOfDefinitionData; i++)
       {
-         // TODO : get rid of the field, type.
-         if(collisionMeshDefinitionDataList.get(i) instanceof SphereCollisionMeshDefinitionData)
+         if (collisionMeshDefinitionDataList.get(i) instanceof SphereCollisionMeshDefinitionData)
          {
-            addSphereCollisionMeshDefinitionData((SphereCollisionMeshDefinitionData) collisionMeshDefinitionDataList.get(i));
+            addSphereCollisionMeshDefinitionData((SphereCollisionMeshDefinitionData) collisionMeshDefinitionDataList.get(i), isVisible);
          }
-         else if(collisionMeshDefinitionDataList.get(i) instanceof CylinderCollisionMeshDefinitionData)
+         else if (collisionMeshDefinitionDataList.get(i) instanceof CylinderCollisionMeshDefinitionData)
          {
-            addCylinderCollisionMeshDefinitionData((CylinderCollisionMeshDefinitionData) collisionMeshDefinitionDataList.get(i));
+            addCylinderCollisionMeshDefinitionData((CylinderCollisionMeshDefinitionData) collisionMeshDefinitionDataList.get(i), isVisible);
          }
-         else if(collisionMeshDefinitionDataList.get(i) instanceof BoxCollisionMeshDefinitionData)
+         else if (collisionMeshDefinitionDataList.get(i) instanceof BoxCollisionMeshDefinitionData)
          {
-            addBoxCollisionMeshDefinitionData((BoxCollisionMeshDefinitionData) collisionMeshDefinitionDataList.get(i));
+            addBoxCollisionMeshDefinitionData((BoxCollisionMeshDefinitionData) collisionMeshDefinitionDataList.get(i), isVisible);
          }
          else
          {
@@ -136,7 +136,7 @@ public class RobotDescription implements RobotDescriptionNode, GraphicsObjectsHo
       }
    }
 
-   private void addBoxCollisionMeshDefinitionData(BoxCollisionMeshDefinitionData collisionMeshDefinitionData)
+   private void addBoxCollisionMeshDefinitionData(BoxCollisionMeshDefinitionData collisionMeshDefinitionData, boolean isVisible)
    {
       LinkDescription linkDescription = getLinkDescription(collisionMeshDefinitionData.getParentJointName());
 
@@ -149,29 +149,32 @@ public class RobotDescription implements RobotDescriptionNode, GraphicsObjectsHo
       collisionMesh.setCollisionMask(collisionMeshDefinitionData.getCollisionMask());
       linkDescription.addCollisionMesh(collisionMesh);
 
-      LinkGraphicsDescription linkGraphics;
-      if (linkDescription.getLinkGraphics() != null)
+      if (isVisible)
       {
-         linkGraphics = linkDescription.getLinkGraphics();
-         linkGraphics.identity();
-         linkGraphics.transform(collisionMeshDefinitionData.getTransformToParentJoint());
-         linkGraphics.translate(0, 0, -0.5 * collisionMeshDefinitionData.getHeight());
-         linkGraphics.addCube(collisionMeshDefinitionData.getLength(), collisionMeshDefinitionData.getWidth(), collisionMeshDefinitionData.getHeight(),
-                              collisionMeshDefinitionData.getYoAppearance());
-      }
-      else
-      {
-         linkGraphics = new LinkGraphicsDescription();
-         linkGraphics.identity();
-         linkGraphics.transform(collisionMeshDefinitionData.getTransformToParentJoint());
-         linkGraphics.translate(0, 0, -0.5 * collisionMeshDefinitionData.getHeight());
-         linkGraphics.addCube(collisionMeshDefinitionData.getLength(), collisionMeshDefinitionData.getWidth(), collisionMeshDefinitionData.getHeight(),
-                              collisionMeshDefinitionData.getYoAppearance());
-         linkDescription.setLinkGraphics(linkGraphics);
+         LinkGraphicsDescription linkGraphics;
+         if (linkDescription.getLinkGraphics() != null)
+         {
+            linkGraphics = linkDescription.getLinkGraphics();
+            linkGraphics.identity();
+            linkGraphics.transform(collisionMeshDefinitionData.getTransformToParentJoint());
+            linkGraphics.translate(0, 0, -0.5 * collisionMeshDefinitionData.getHeight());
+            linkGraphics.addCube(collisionMeshDefinitionData.getLength(), collisionMeshDefinitionData.getWidth(), collisionMeshDefinitionData.getHeight(),
+                                 collisionMeshDefinitionData.getYoAppearance());
+         }
+         else
+         {
+            linkGraphics = new LinkGraphicsDescription();
+            linkGraphics.identity();
+            linkGraphics.transform(collisionMeshDefinitionData.getTransformToParentJoint());
+            linkGraphics.translate(0, 0, -0.5 * collisionMeshDefinitionData.getHeight());
+            linkGraphics.addCube(collisionMeshDefinitionData.getLength(), collisionMeshDefinitionData.getWidth(), collisionMeshDefinitionData.getHeight(),
+                                 collisionMeshDefinitionData.getYoAppearance());
+            linkDescription.setLinkGraphics(linkGraphics);
+         }
       }
    }
 
-   private void addSphereCollisionMeshDefinitionData(SphereCollisionMeshDefinitionData collisionMeshDefinitionData)
+   private void addSphereCollisionMeshDefinitionData(SphereCollisionMeshDefinitionData collisionMeshDefinitionData, boolean isVisible)
    {
       LinkDescription linkDescription = getLinkDescription(collisionMeshDefinitionData.getParentJointName());
 
@@ -183,25 +186,28 @@ public class RobotDescription implements RobotDescriptionNode, GraphicsObjectsHo
       collisionMesh.setCollisionMask(collisionMeshDefinitionData.getCollisionMask());
       linkDescription.addCollisionMesh(collisionMesh);
 
-      LinkGraphicsDescription linkGraphics;
-      if (linkDescription.getLinkGraphics() != null)
+      if (isVisible)
       {
-         linkGraphics = linkDescription.getLinkGraphics();
-         linkGraphics.identity();
-         linkGraphics.transform(collisionMeshDefinitionData.getTransformToParentJoint());
-         linkGraphics.addSphere(collisionMeshDefinitionData.getRadius(), collisionMeshDefinitionData.getYoAppearance());
-      }
-      else
-      {
-         linkGraphics = new LinkGraphicsDescription();
-         linkGraphics.identity();
-         linkGraphics.transform(collisionMeshDefinitionData.getTransformToParentJoint());
-         linkGraphics.addSphere(collisionMeshDefinitionData.getRadius(), collisionMeshDefinitionData.getYoAppearance());
-         linkDescription.setLinkGraphics(linkGraphics);
+         LinkGraphicsDescription linkGraphics;
+         if (linkDescription.getLinkGraphics() != null)
+         {
+            linkGraphics = linkDescription.getLinkGraphics();
+            linkGraphics.identity();
+            linkGraphics.transform(collisionMeshDefinitionData.getTransformToParentJoint());
+            linkGraphics.addSphere(collisionMeshDefinitionData.getRadius(), collisionMeshDefinitionData.getYoAppearance());
+         }
+         else
+         {
+            linkGraphics = new LinkGraphicsDescription();
+            linkGraphics.identity();
+            linkGraphics.transform(collisionMeshDefinitionData.getTransformToParentJoint());
+            linkGraphics.addSphere(collisionMeshDefinitionData.getRadius(), collisionMeshDefinitionData.getYoAppearance());
+            linkDescription.setLinkGraphics(linkGraphics);
+         }
       }
    }
 
-   private void addCylinderCollisionMeshDefinitionData(CylinderCollisionMeshDefinitionData collisionMeshDefinitionData)
+   private void addCylinderCollisionMeshDefinitionData(CylinderCollisionMeshDefinitionData collisionMeshDefinitionData, boolean isVisible)
    {
       LinkDescription linkDescription = getLinkDescription(collisionMeshDefinitionData.getParentJointName());
 
@@ -213,23 +219,26 @@ public class RobotDescription implements RobotDescriptionNode, GraphicsObjectsHo
       collisionMesh.setCollisionMask(collisionMeshDefinitionData.getCollisionMask());
       linkDescription.addCollisionMesh(collisionMesh);
 
-      LinkGraphicsDescription linkGraphics;
-      if (linkDescription.getLinkGraphics() != null)
+      if (isVisible)
       {
-         linkGraphics = linkDescription.getLinkGraphics();
-         linkGraphics.identity();
-         linkGraphics.transform(collisionMeshDefinitionData.getTransformToParentJoint());
-         linkGraphics.addCylinder(collisionMeshDefinitionData.getHeight(), collisionMeshDefinitionData.getRadius(),
-                                  collisionMeshDefinitionData.getYoAppearance());
-      }
-      else
-      {
-         linkGraphics = new LinkGraphicsDescription();
-         linkGraphics.identity();
-         linkGraphics.transform(collisionMeshDefinitionData.getTransformToParentJoint());
-         linkGraphics.addCylinder(collisionMeshDefinitionData.getHeight(), collisionMeshDefinitionData.getRadius(),
-                                  collisionMeshDefinitionData.getYoAppearance());
-         linkDescription.setLinkGraphics(linkGraphics);
+         LinkGraphicsDescription linkGraphics;
+         if (linkDescription.getLinkGraphics() != null)
+         {
+            linkGraphics = linkDescription.getLinkGraphics();
+            linkGraphics.identity();
+            linkGraphics.transform(collisionMeshDefinitionData.getTransformToParentJoint());
+            linkGraphics.addCylinder(collisionMeshDefinitionData.getHeight(), collisionMeshDefinitionData.getRadius(),
+                                     collisionMeshDefinitionData.getYoAppearance());
+         }
+         else
+         {
+            linkGraphics = new LinkGraphicsDescription();
+            linkGraphics.identity();
+            linkGraphics.transform(collisionMeshDefinitionData.getTransformToParentJoint());
+            linkGraphics.addCylinder(collisionMeshDefinitionData.getHeight(), collisionMeshDefinitionData.getRadius(),
+                                     collisionMeshDefinitionData.getYoAppearance());
+            linkDescription.setLinkGraphics(linkGraphics);
+         }
       }
    }
 }

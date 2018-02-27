@@ -6,6 +6,7 @@ import java.util.List;
 public class CollisionMeshDefinitionDataHolder
 {
    private List<CollisionMeshDefinitionData> collisionMeshDefinitionDataList = new ArrayList<>();
+   private boolean isVisible = false;
 
    public void addCollisionMeshDefinitionData(CollisionMeshDefinitionData collisionMeshData)
    {
@@ -15,5 +16,15 @@ public class CollisionMeshDefinitionDataHolder
    public List<CollisionMeshDefinitionData> getCollisionMeshDefinitionData()
    {
       return collisionMeshDefinitionDataList;
+   }
+
+   public void setVisible(boolean value)
+   {
+      isVisible = value;
+   }
+
+   public boolean isVisible()
+   {
+      return isVisible;
    }
 }

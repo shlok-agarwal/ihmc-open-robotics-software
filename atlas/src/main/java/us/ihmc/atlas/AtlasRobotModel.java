@@ -187,6 +187,7 @@ public class AtlasRobotModel implements DRCRobotModel, SDFDescriptionMutator
       RobotDescription robotDescription = descriptionLoader.loadRobotDescriptionFromSDF(generalizedSDFRobotModel, jointMap, contactPointParameters,
                                                                                         useCollisionMeshes);
 
+      collisionMeshDefinitionDataHolder.setVisible(false);
       robotDescription.addCollisionMeshDefinitionData(collisionMeshDefinitionDataHolder);
 
       return robotDescription;
