@@ -119,7 +119,6 @@ public class AvatarSimulationFactory
 
       List<Robot> allSimulatedRobotList = new ArrayList<Robot>();
       allSimulatedRobotList.add(humanoidFloatingRootJointRobot);
-      PrintTools.info("commanAvatarEnvironment");
       if (commonAvatarEnvironment.get() != null && commonAvatarEnvironment.get().getEnvironmentRobots() != null)
       {
          allSimulatedRobotList.addAll(commonAvatarEnvironment.get().getEnvironmentRobots());
@@ -467,7 +466,6 @@ public class AvatarSimulationFactory
 
    public void setCommonAvatarEnvironment(CommonAvatarEnvironmentInterface commonAvatarEnvironment)
    {
-      // TODO. Inho.
       this.commonAvatarEnvironment.set(commonAvatarEnvironment);
    }
 
