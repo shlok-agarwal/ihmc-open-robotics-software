@@ -28,7 +28,6 @@ import us.ihmc.humanoidRobotics.communication.packets.walking.PelvisOrientationT
 import us.ihmc.humanoidRobotics.communication.packets.walking.PelvisTrajectoryMessage;
 import us.ihmc.humanoidRobotics.communication.packets.walking.SpineDesiredAccelerationsMessage;
 import us.ihmc.humanoidRobotics.communication.packets.walking.SpineTrajectoryMessage;
-import us.ihmc.humanoidRobotics.communication.packets.wholebody.WholeBodyTrajectoryMessage;
 import us.ihmc.humanoidRobotics.footstep.Footstep;
 import us.ihmc.idl.TempPreallocatedList;
 import us.ihmc.robotics.robotSide.RobotSide;
@@ -305,7 +304,7 @@ public abstract class PacketValidityChecker
 
    public static String validateHandTrajectoryMessage(HandTrajectoryMessage message)
    {
-      String errorMessage = validatePacket(message, true);
+      String errorMessage = validatePacket(message);
       if (errorMessage == null)
          errorMessage = validateSE3TrajectoryMessage(message.se3Trajectory);
       if (errorMessage != null)
@@ -325,7 +324,7 @@ public abstract class PacketValidityChecker
 
    public static String validateArmTrajectoryMessage(ArmTrajectoryMessage message)
    {
-      String errorMessage = validatePacket(message, true);
+      String errorMessage = validatePacket(message);
       if (errorMessage == null)
          errorMessage = validateJointspaceTrajectoryMessage(message.getJointspaceTrajectory());
       if (errorMessage != null)
@@ -344,7 +343,7 @@ public abstract class PacketValidityChecker
 
    public static String validateHeadTrajectoryMessage(HeadTrajectoryMessage message)
    {
-      String errorMessage = validatePacket(message, true);
+      String errorMessage = validatePacket(message);
       if (errorMessage == null)
          errorMessage = validateSO3TrajectoryMessage(message.so3Trajectory);
       if (errorMessage != null)
@@ -355,7 +354,7 @@ public abstract class PacketValidityChecker
 
    public static String validateChestTrajectoryMessage(ChestTrajectoryMessage message)
    {
-      String errorMessage = validatePacket(message, true);
+      String errorMessage = validatePacket(message);
       if (errorMessage == null)
          errorMessage = validateSO3TrajectoryMessage(message.so3Trajectory);
       if (errorMessage != null)
@@ -366,7 +365,7 @@ public abstract class PacketValidityChecker
 
    public static String validateNeckTrajectoryMessage(NeckTrajectoryMessage message)
    {
-      String errorMessage = validatePacket(message, true);
+      String errorMessage = validatePacket(message);
       if (errorMessage == null)
          errorMessage = validateJointspaceTrajectoryMessage(message.getJointspaceTrajectory());
       if (errorMessage != null)
@@ -377,7 +376,7 @@ public abstract class PacketValidityChecker
 
    public static String validateSpineTrajectoryMessage(SpineTrajectoryMessage message)
    {
-      String errorMessage = validatePacket(message, true);
+      String errorMessage = validatePacket(message);
       if (errorMessage == null)
          errorMessage = validateJointspaceTrajectoryMessage(message.getJointspaceTrajectory());
       if (errorMessage != null)
@@ -388,7 +387,7 @@ public abstract class PacketValidityChecker
 
    public static String validateJointspaceTrajectoryMessage(JointspaceTrajectoryMessage message)
    {
-      String errorMessage = validatePacket(message, true);
+      String errorMessage = validatePacket(message);
       if (errorMessage != null)
          return message.getClass().getSimpleName() + " " + errorMessage;
 
@@ -427,7 +426,7 @@ public abstract class PacketValidityChecker
 
    public static String validateSE3TrajectoryMessage(SE3TrajectoryMessage message)
    {
-      String errorMessage = validatePacket(message, true);
+      String errorMessage = validatePacket(message);
       if (errorMessage != null)
          return message.getClass().getSimpleName() + " " + errorMessage;
 
@@ -474,7 +473,7 @@ public abstract class PacketValidityChecker
 
    public static String validateSO3TrajectoryMessage(SO3TrajectoryMessage message)
    {
-      String errorMessage = validatePacket(message, true);
+      String errorMessage = validatePacket(message);
       if (errorMessage != null)
          return message.getClass().getSimpleName() + " " + errorMessage;
 
@@ -521,7 +520,7 @@ public abstract class PacketValidityChecker
 
    public static String validatePelvisOrientationTrajectoryMessage(PelvisOrientationTrajectoryMessage message)
    {
-      String errorMessage = validatePacket(message, true);
+      String errorMessage = validatePacket(message);
       if (errorMessage == null)
          errorMessage = validateSO3TrajectoryMessage(message.so3Trajectory);
       if (errorMessage != null)
@@ -532,7 +531,7 @@ public abstract class PacketValidityChecker
 
    public static String validatePelvisTrajectoryMessage(PelvisTrajectoryMessage message)
    {
-      String errorMessage = validatePacket(message, true);
+      String errorMessage = validatePacket(message);
       if (errorMessage == null)
          errorMessage = validateSE3TrajectoryMessage(message.se3Trajectory);
       if (errorMessage != null)
@@ -543,7 +542,7 @@ public abstract class PacketValidityChecker
 
    public static String validateFootTrajectoryMessage(FootTrajectoryMessage message)
    {
-      String errorMessage = validatePacket(message, true);
+      String errorMessage = validatePacket(message);
       if (errorMessage == null)
          errorMessage = validateSE3TrajectoryMessage(message.se3Trajectory);
       if (errorMessage != null)
@@ -564,7 +563,7 @@ public abstract class PacketValidityChecker
 
    public static String validateFootLoadBearingMessage(FootLoadBearingMessage message)
    {
-      String errorMessage = validatePacket(message, true);
+      String errorMessage = validatePacket(message);
       if (errorMessage != null)
          return message.getClass().getSimpleName() + " " + errorMessage;
 
@@ -583,7 +582,7 @@ public abstract class PacketValidityChecker
 
    public static String validateGoHomeMessage(GoHomeMessage message)
    {
-      String errorMessage = validatePacket(message, true);
+      String errorMessage = validatePacket(message);
       if (errorMessage != null)
          return message.getClass().getSimpleName() + " " + errorMessage;
 
@@ -613,7 +612,7 @@ public abstract class PacketValidityChecker
 
    public static String validatePelvisHeightTrajectoryMessage(PelvisHeightTrajectoryMessage message)
    {
-      String errorMessage = validatePacket(message, true);
+      String errorMessage = validatePacket(message);
       if (errorMessage != null)
          return message.getClass().getSimpleName() + " " + errorMessage;
 
@@ -644,9 +643,9 @@ public abstract class PacketValidityChecker
 
    public static String validateArmDesiredAccelerationsMessage(ArmDesiredAccelerationsMessage message)
    {
-      String errorMessage = validatePacket(message, true);
+      String errorMessage = validatePacket(message);
       if (errorMessage == null)
-         errorMessage = validateDesiredAccelerationsMessage(message.getDesiredAccelerations(), false);
+         errorMessage = validateDesiredAccelerationsMessage(message.getDesiredAccelerations());
       if (errorMessage != null)
          return message.getClass().getSimpleName() + " " + errorMessage;
 
@@ -663,9 +662,9 @@ public abstract class PacketValidityChecker
 
    public static String validateNeckDesiredAccelerationsMessage(NeckDesiredAccelerationsMessage message)
    {
-      String errorMessage = validatePacket(message, true);
+      String errorMessage = validatePacket(message);
       if (errorMessage == null)
-         errorMessage = validateDesiredAccelerationsMessage(message.getDesiredAccelerations(), false);
+         errorMessage = validateDesiredAccelerationsMessage(message.getDesiredAccelerations());
       if (errorMessage != null)
          return NeckDesiredAccelerationsMessage.class.getSimpleName() + " " + errorMessage;
 
@@ -674,9 +673,9 @@ public abstract class PacketValidityChecker
 
    public static String validateSpineDesiredAccelerationsMessage(SpineDesiredAccelerationsMessage message)
    {
-      String errorMessage = validatePacket(message, true);
+      String errorMessage = validatePacket(message);
       if (errorMessage == null)
-         errorMessage = validateDesiredAccelerationsMessage(message.getDesiredAccelerations(), false);
+         errorMessage = validateDesiredAccelerationsMessage(message.getDesiredAccelerations());
       if (errorMessage != null)
          return message.getClass().getSimpleName() + " " + errorMessage;
 
@@ -686,7 +685,7 @@ public abstract class PacketValidityChecker
    private static String validateSE3TrajectoryPointMessage(SE3TrajectoryPointMessage se3TrajectoryPoint, SE3TrajectoryPointMessage previousSE3TrajectoryPoint,
                                                            boolean checkId)
    {
-      String errorMessage = validatePacket(se3TrajectoryPoint, checkId);
+      String errorMessage = validatePacket(se3TrajectoryPoint);
       if (errorMessage != null)
          return errorMessage;
 
@@ -723,7 +722,7 @@ public abstract class PacketValidityChecker
    private static String validateEuclideanTrajectoryPointMessage(EuclideanTrajectoryPointMessage se3TrajectoryPoint,
          EuclideanTrajectoryPointMessage previousTrajectoryPoint, boolean checkId)
    {
-      String errorMessage = validatePacket(se3TrajectoryPoint, checkId);
+      String errorMessage = validatePacket(se3TrajectoryPoint);
       if (errorMessage != null)
          return errorMessage;
 
@@ -751,7 +750,7 @@ public abstract class PacketValidityChecker
    private static String validateSO3TrajectoryPointMessage(SO3TrajectoryPointMessage so3TrajectoryPoint, SO3TrajectoryPointMessage previousSO3TrajectoryPoint,
                                                            boolean checkId)
    {
-      String errorMessage = validatePacket(so3TrajectoryPoint, checkId);
+      String errorMessage = validatePacket(so3TrajectoryPoint);
       if (errorMessage != null)
          return errorMessage;
 
@@ -779,7 +778,7 @@ public abstract class PacketValidityChecker
    private static String validateTrajectoryPoint1DMessage(TrajectoryPoint1DMessage waypoint1D, TrajectoryPoint1DMessage previousTrajectoryPoint1D,
                                                           boolean checkId)
    {
-      String errorMessage = validatePacket(waypoint1D, checkId);
+      String errorMessage = validatePacket(waypoint1D);
       if (errorMessage != null)
          return errorMessage;
 
@@ -808,7 +807,7 @@ public abstract class PacketValidityChecker
 
    public static String validateOneJointTrajectoryMessage(OneDoFJointTrajectoryMessage message, boolean checkId)
    {
-      String errorMessage = validatePacket(message, checkId);
+      String errorMessage = validatePacket(message);
       if (errorMessage != null)
          return errorMessage;
 
@@ -843,21 +842,17 @@ public abstract class PacketValidityChecker
       return null;
    }
 
-   public static String validatePacket(Packet<?> packet, boolean checkId)
+   public static String validatePacket(Packet<?> packet)
    {
       if (packet == null)
          return "is null.";
-      if (checkId && packet.getUniqueId() == Packet.INVALID_MESSAGE_ID)
-         return "invalid id.";
       return null;
    }
 
-   public static String validateDesiredAccelerationsMessage(DesiredAccelerationsMessage message, boolean checkId)
+   public static String validateDesiredAccelerationsMessage(DesiredAccelerationsMessage message)
    {
       if (message == null)
          return "is null.";
-      if (checkId && message.getUniqueId() == Packet.INVALID_MESSAGE_ID)
-         return "invalid id.";
       if(message.getDesiredJointAccelerations() == null)
       {
          return "desired acceleration buffer null";
