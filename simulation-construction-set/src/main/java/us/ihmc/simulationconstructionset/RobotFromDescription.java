@@ -236,7 +236,7 @@ public class RobotFromDescription extends Robot implements OneDegreeOfFreedomJoi
 
       for (ForceSensorDescription forceSensorDescription : forceSensorDescriptions)
       {
-         OneDegreeOfFreedomJoint oneDegreeOfFreedomJoint = (OneDegreeOfFreedomJoint) joint;
+         Joint oneDegreeOfFreedomJoint = joint;
          WrenchCalculatorInterface wrenchCalculator;
 
          if (forceSensorDescription.useGroundContactPoints())
