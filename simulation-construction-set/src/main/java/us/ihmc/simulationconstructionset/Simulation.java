@@ -34,6 +34,8 @@ public class Simulation implements YoVariableHolder, Serializable // Runnable,
 {
    private static final long serialVersionUID = 8438645717978048239L;
 
+   private ScsCollisionDetector collisionDetector;
+
    private Graphics3DAdapter myGraphics;
 
    private final SimulationSynchronizer simulationSynchronizer;
@@ -466,8 +468,6 @@ public class Simulation implements YoVariableHolder, Serializable // Runnable,
       return simulationSynchronizer;
    }
 
-   private ScsCollisionDetector collisionDetector;
-
    public void initializeCollisionDetector(DefaultCollisionVisualizer collisionVisualizer, CollisionHandler collisionHandler)
    {
       collisionDetector = createCollisionShapesFromLinks(robots, collisionHandler);
@@ -485,7 +485,7 @@ public class Simulation implements YoVariableHolder, Serializable // Runnable,
       CollisionShapeDescription<?> collisionShapeDescription = shapeFactory.createSimpleShape(simpleShape);
 
       CollisionShape collisionShape = shapeFactory.addShape(collisionShapeDescription);
-      
+
       RigidBodyTransform transform = new RigidBodyTransform();
       simpleShape.getPose(transform);
       collisionShape.setTransformToWorld(transform);
@@ -498,7 +498,6 @@ public class Simulation implements YoVariableHolder, Serializable // Runnable,
       this.initPhysics(new ScsPhysics(null, collisionDetector, collisionArbiter, collisionHandler, collisionVisualizer));
    }
 
-   // TODO : this is old one.
    public void initializeCollisionDetectionAndHandling(DefaultCollisionVisualizer collisionVisualizer, CollisionHandler collisionHandler)
    {
       ScsCollisionDetector collisionDetector = createCollisionShapesFromLinks(robots, collisionHandler);
