@@ -3,7 +3,7 @@ package us.ihmc.simulationconstructionset.simulatedSensors;
 import org.ejml.data.DenseMatrix64F;
 
 import us.ihmc.euclid.transform.RigidBodyTransform;
-import us.ihmc.simulationconstructionset.OneDegreeOfFreedomJoint;
+import us.ihmc.simulationconstructionset.Joint;
 
 public interface WrenchCalculatorInterface
 {
@@ -15,7 +15,7 @@ public interface WrenchCalculatorInterface
 
    public abstract DenseMatrix64F getWrench();
 
-   public abstract OneDegreeOfFreedomJoint getJoint();
+   public abstract Joint getJoint();
 
    public abstract void corruptWrenchElement(int row, double value);
 

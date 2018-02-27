@@ -72,7 +72,8 @@ public class DRCInverseDynamicsCalculatorTestHelper
 
    private final SideDependentList<ExternalForcePoint> feetExternalForcePoints;
 
-   public DRCInverseDynamicsCalculatorTestHelper(FullHumanoidRobotModel fullRobotModel, HumanoidFloatingRootJointRobot robot, boolean visualize, double gravityZ)
+   public DRCInverseDynamicsCalculatorTestHelper(FullHumanoidRobotModel fullRobotModel, HumanoidFloatingRootJointRobot robot, boolean visualize,
+                                                 double gravityZ)
    {
       this.fullRobotModel = fullRobotModel;
       this.robot = robot;
@@ -432,7 +433,7 @@ public class DRCInverseDynamicsCalculatorTestHelper
    }
 
    public void setFullRobotModelAccelerationRandomly(Random random, double maxPelvisLinearAcceleration, double maxPelvisAngularAcceleration,
-         double maxJointAcceleration)
+                                                     double maxJointAcceleration)
    {
       FloatingInverseDynamicsJoint sixDoFJoint = fullRobotModel.getRootJoint();
       setSixDoFJointAccelerationRandomly(sixDoFJoint, random, maxPelvisLinearAcceleration, maxPelvisAngularAcceleration);
@@ -484,12 +485,15 @@ public class DRCInverseDynamicsCalculatorTestHelper
       {
          if (groundContactPointBasedWrenchCalculator instanceof GroundContactPointBasedWrenchCalculator)
          {
-            OneDegreeOfFreedomJoint joint = groundContactPointBasedWrenchCalculator.getJoint();
-            OneDoFJoint oneDoFJoint = fullRobotModel.getOneDoFJointByName(joint.getName());
+            Joint joint = groundContactPointBasedWrenchCalculator.getJoint();
+            OneDoFJoint oneDoFJoint;
+            if (joint instanceof OneDegreeOfFreedomJoint)
+               oneDoFJoint = fullRobotModel.getOneDoFJointByName(joint.getName());
+            else
+               throw new RuntimeException("Force sensor is only supported for OneDegreeOfFreedomJoint.");
 
             RigidBody rigidBodyToApplyWrenchTo = oneDoFJoint.getSuccessor();
             ReferenceFrame bodyFixedFrame = rigidBodyToApplyWrenchTo.getBodyFixedFrame();
-
             groundContactPointBasedWrenchCalculator.calculate();
             DenseMatrix64F wrenchFromSimulation = groundContactPointBasedWrenchCalculator.getWrench();
             ReferenceFrame frameAtJoint = rigidBodyToApplyWrenchTo.getParentJoint().getFrameAfterJoint();
@@ -601,7 +605,7 @@ public class DRCInverseDynamicsCalculatorTestHelper
       ReferenceFrame bodyFrame = rootJoint.getFrameAfterJoint();
 
       Twist bodyTwist = new Twist(bodyFrame, elevatorFrame, bodyFrame, RandomGeometry.nextVector3D(random, maxRootJointLinearAndAngularVelocity),
-            RandomGeometry.nextVector3D(random, maxRootJointLinearAndAngularVelocity));
+                                  RandomGeometry.nextVector3D(random, maxRootJointLinearAndAngularVelocity));
       rootJoint.setJointTwist(bodyTwist);
 
       rootJoint.setPosition(RandomGeometry.nextVector3D(random));
@@ -738,7 +742,7 @@ public class DRCInverseDynamicsCalculatorTestHelper
          ReferenceFrame bodyFixedFrame = foot.getBodyFixedFrame();
 
          Wrench wrench = new Wrench(bodyFixedFrame, bodyFixedFrame, RandomGeometry.nextVector3D(random, maxFeetExternalForce),
-               RandomGeometry.nextVector3D(random, maxFeetExternalTorque));
+                                    RandomGeometry.nextVector3D(random, maxFeetExternalTorque));
          inverseDynamicsCalculator.setExternalWrench(foot, wrench);
       }
    }
@@ -779,7 +783,7 @@ public class DRCInverseDynamicsCalculatorTestHelper
    }
 
    public void setSixDoFJointAccelerationRandomly(FloatingInverseDynamicsJoint sixDoFJoint, Random random, double maxRootJointLinearAcceleration,
-         double maxRootJointAngularAcceleration)
+                                                  double maxRootJointAngularAcceleration)
    {
       // Note: To get the acceleration, you can't just changeFrame on the acceleration provided by SCS. Use setBasedOnOriginAcceleration instead.
       ReferenceFrame elevatorFrame = sixDoFJoint.getFrameBeforeJoint();
