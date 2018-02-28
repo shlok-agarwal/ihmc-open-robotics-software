@@ -8,13 +8,16 @@ import us.ihmc.simulationconstructionset.collisionMeshDefinition.CollisionMeshDe
 
 public class FallingBoxCollisionMeshDefinitionDataHolder extends CollisionMeshDefinitionDataHolder
 {
-   public FallingBoxCollisionMeshDefinitionDataHolder(Box3D box)
+   public FallingBoxCollisionMeshDefinitionDataHolder(FallingBoxRobotDescription robotDescription)
    {
+      Box3D bodyBox = robotDescription.getBodyBox();
       RigidBodyTransform transformToBody = new RigidBodyTransform();
-      CollisionMeshDefinitionData bodyCollisionMeshData = new BoxCollisionMeshDefinitionData("body", box.getLength(), box.getWidth(), box.getHeight());
+      transformToBody.appendTranslation(0.0, 0.0, -0.5 * bodyBox.getHeight());
+      CollisionMeshDefinitionData bodyCollisionMeshData = new BoxCollisionMeshDefinitionData("bodyJoint", bodyBox.getLength(), bodyBox.getWidth(),
+                                                                                             bodyBox.getHeight());
       bodyCollisionMeshData.setTransformToParentJoint(transformToBody);
       addCollisionMeshDefinitionData(bodyCollisionMeshData);
-      
+
       setVisible(true);
    }
 }

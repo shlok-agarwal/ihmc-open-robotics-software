@@ -24,7 +24,7 @@ public class FallingBoxSimulation
 {
    static double dt = 0.001;
 
-   static double mass = 10.0;
+   static double mass = 30.0;
    static double heightOfTwoRobots = 1.0;
    static double gapOfTwoRobots = 1.0;
 
@@ -33,7 +33,8 @@ public class FallingBoxSimulation
    static Vector3D initialOrientationAxisAngle = new Vector3D(0.0, Math.PI * 0.1, 0.0);
    static Quaternion initialOrientation = new Quaternion(initialOrientationAxisAngle);
 
-   static Box3D box = new Box3D(0.5, 0.3, 0.15);
+   static Box3D rootBox = new Box3D(0.05, 0.05, 0.1);
+   static Box3D bodyBox = new Box3D(0.5, 0.3, 0.15);
 
    /**
     * this test is to compare force result between case that robot has ground contact point and case that robot has collision shape.
@@ -41,22 +42,26 @@ public class FallingBoxSimulation
    public FallingBoxSimulation()
    {
       // robot with ground contact point.
-      FallingBoxRobotDescription descriptionWithGCP = new FallingBoxRobotDescription("robotWithGCP", box, mass, true);
+      FallingBoxRobotDescription descriptionWithGCP = new FallingBoxRobotDescription("robotWithGCP", rootBox, bodyBox, mass, true);
       Robot robotWithGCP = new RobotFromDescription(descriptionWithGCP);
       FloatingJoint floatingJointOne = (FloatingJoint) robotWithGCP.getRootJoints().get(0);
       floatingJointOne.setPosition(initialPositionOne);
       floatingJointOne.setQuaternion(initialOrientation);
       GroundContactModel groundModel = new LinearGroundContactModel(robotWithGCP, 1422, 150.6, 50.0, 1000.0, robotWithGCP.getRobotsYoVariableRegistry());
       robotWithGCP.setGroundContactModel(groundModel);
+      FallingBoxRobotController robotWithGCPController = new FallingBoxRobotController(robotWithGCP, dt);
+      robotWithGCP.setController(robotWithGCPController);
 
       //robot with collision shape.
-      FallingBoxRobotDescription descriptionWithCS = new FallingBoxRobotDescription("robotWithCS", box, mass, false);
-      FallingBoxCollisionMeshDefinitionDataHolder collisionMeshData = new FallingBoxCollisionMeshDefinitionDataHolder(box);
+      FallingBoxRobotDescription descriptionWithCS = new FallingBoxRobotDescription("robotWithCS", rootBox, bodyBox, mass, false);
+      FallingBoxCollisionMeshDefinitionDataHolder collisionMeshData = new FallingBoxCollisionMeshDefinitionDataHolder(descriptionWithCS);
       descriptionWithCS.addCollisionMeshDefinitionData(collisionMeshData);
       Robot robotWithCS = new RobotFromDescription(descriptionWithCS);
       FloatingJoint floatingJointTwo = (FloatingJoint) robotWithCS.getRootJoints().get(0);
       floatingJointTwo.setPosition(initialPositionTwo);
       floatingJointTwo.setQuaternion(initialOrientation);
+      FallingBoxRobotController robotWithCSController = new FallingBoxRobotController(robotWithCS, dt);
+      robotWithCS.setController(robotWithCSController);
 
       List<Robot> allSimulatedRobotList = new ArrayList<Robot>();
       allSimulatedRobotList.add(robotWithGCP);
