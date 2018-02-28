@@ -1,16 +1,22 @@
 package us.ihmc.exampleSimulations.forceSensorExamples;
 
+import us.ihmc.euclid.Axis;
 import us.ihmc.euclid.geometry.Box3D;
+import us.ihmc.euclid.transform.RigidBodyTransform;
 import us.ihmc.euclid.tuple3D.Vector3D;
 import us.ihmc.graphicsDescription.appearance.YoAppearance;
 import us.ihmc.robotics.robotDescription.FloatingJointDescription;
+import us.ihmc.robotics.robotDescription.ForceSensorDescription;
 import us.ihmc.robotics.robotDescription.GroundContactPointDescription;
 import us.ihmc.robotics.robotDescription.LinkDescription;
 import us.ihmc.robotics.robotDescription.LinkGraphicsDescription;
+import us.ihmc.robotics.robotDescription.PinJointDescription;
 import us.ihmc.robotics.robotDescription.RobotDescription;
 
 public class FallingBoxRobotDescription extends RobotDescription
 {
+   private Box3D swellingBox = new Box3D(0.05, 0.05, 0.05);
+
    public FallingBoxRobotDescription(String name, Box3D box, double mass, boolean useGroundContactPoints)
    {
       super(name);
@@ -74,6 +80,27 @@ public class FallingBoxRobotDescription extends RobotDescription
 
       this.addRootJoint(bodyJoint);
 
+      PinJointDescription jointOne = new PinJointDescription("swelling", new Vector3D(0.0, 0.0, box.getHeight() * 0.5 + swellingBox.getHeight() * 0.5), Axis.Z);
+
+      LinkDescription linkOne = new LinkDescription("linkOne");
+      linkOne.setMassAndRadiiOfGyration(1.0, swellingBox.getLength(), swellingBox.getWidth(), swellingBox.getHeight());
+
+      LinkGraphicsDescription linkOneGraphics = new LinkGraphicsDescription();
+      linkOneGraphics.translate(0.0, 0.0, -0.5 * swellingBox.getHeight());
+      linkOneGraphics.addCube(swellingBox.getLength(), swellingBox.getWidth(), swellingBox.getHeight(), YoAppearance.Blue());
+      linkOneGraphics.identity();
+      linkOne.setLinkGraphics(linkOneGraphics);
+
+      jointOne.setLink(linkOne);
+
+      RigidBodyTransform sensorLocation = new RigidBodyTransform();
+      sensorLocation.appendTranslation(0.0, 0.0, -swellingBox.getHeight() * 0.5);
+      ForceSensorDescription ftSensor = new ForceSensorDescription(name + "_ft", sensorLocation);
+      ftSensor.setUseGroundContactPoints(false);
+
+      jointOne.addForceSensor(ftSensor);
+
+      bodyJoint.addJoint(jointOne);
    }
 
 }
