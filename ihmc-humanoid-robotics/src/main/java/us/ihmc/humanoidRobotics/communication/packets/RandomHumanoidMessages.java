@@ -436,7 +436,7 @@ public final class RandomHumanoidMessages
       next.robotSide = RobotSide.generateRandomRobotSide(random).toByte();
       next.location = EuclidCoreRandomTools.nextPoint3D(random);
       next.orientation = EuclidCoreRandomTools.nextQuaternion(random);
-      IntStream.range(0, random.nextInt(10)).forEach(i -> next.predictedContactPoints2D.add().set(EuclidCoreRandomTools.nextPoint2D(random)));
+      IntStream.range(0, random.nextInt(10)).forEach(i -> next.predictedContactPoint2Ds.add().set(EuclidCoreRandomTools.nextPoint2D(random)));
       next.trajectoryType = RandomNumbers.nextEnum(random, TrajectoryType.class).toByte();
       next.swingHeight = RandomNumbers.nextDoubleWithEdgeCases(random, 0.1);
       if (next.trajectoryType == TrajectoryType.CUSTOM.toByte())

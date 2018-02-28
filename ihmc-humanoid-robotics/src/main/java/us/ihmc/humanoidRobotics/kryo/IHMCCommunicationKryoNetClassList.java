@@ -53,10 +53,6 @@ import us.ihmc.communication.producers.VideoSource;
 import us.ihmc.euclid.geometry.Orientation2D;
 import us.ihmc.euclid.geometry.Pose2D;
 import us.ihmc.euclid.geometry.Pose3D;
-import us.ihmc.euclid.tuple2D.Point2D;
-import us.ihmc.euclid.tuple2D.Point2D32;
-import us.ihmc.euclid.tuple2D.Vector2D;
-import us.ihmc.euclid.tuple2D.Vector2D32;
 import us.ihmc.euclid.tuple3D.Point3D;
 import us.ihmc.euclid.tuple3D.Point3D32;
 import us.ihmc.euclid.tuple3D.Vector3D;
@@ -248,7 +244,6 @@ public class IHMCCommunicationKryoNetClassList extends NetClassList
       registerPacketField(Point3D.class);
       registerPacketField(Point3D32.class);
       registerPacketField(Vector3D.class);
-      registerPacketField(Vector2D32.class);
 
       registerPacketField(Vector3D32.class);
       registerPacketField(Vector3D32[].class);
@@ -338,7 +333,6 @@ public class IHMCCommunicationKryoNetClassList extends NetClassList
       registerPacketField(FootstepPlanningResult.class);
       registerPacketField(Pose2D.class);
       registerPacketField(Orientation2D.class);
-      registerPacketField(Vector2D.class);
       registerPacketField(Point3D.class);
       registerPacketField(Point3D[].class);
       registerPacketField(Point3D[][].class);
@@ -412,8 +406,6 @@ public class IHMCCommunicationKryoNetClassList extends NetClassList
       registerPacketField(PlanarRegionsRequestType.class);
       registerPacketField(Point3D32.class);
       registerPacketField(Vector3D32.class);
-      registerPacketField(Point2D32.class);
-      registerPacketField(Point2D32[].class);
       registerPacketField(BoundingBox3DMessage.class);
       registerPacketField(Polygon2DMessage.class);
       registerPacketField(Polygon2DMessage[].class);
@@ -485,7 +477,6 @@ public class IHMCCommunicationKryoNetClassList extends NetClassList
       registerPacketField(CurrentBehaviorStatus.class);
 
       registerPacketClass(CapturabilityBasedStatus.class);
-      registerPacketFields(Point2D.class, Point2D[].class);
 
       // Planning
       registerPacketClass(FootstepPathPlanPacket.class);

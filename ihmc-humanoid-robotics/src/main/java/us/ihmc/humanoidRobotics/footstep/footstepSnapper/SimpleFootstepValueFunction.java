@@ -35,7 +35,7 @@ public class SimpleFootstepValueFunction implements FootstepValueFunction
          return Double.NEGATIVE_INFINITY;
 
       double value = slopeGain * offHorizontalAngle;
-      if (footstepData.predictedContactPoints2D == null || footstepData.predictedContactPoints2D.isEmpty())
+      if (footstepData.predictedContactPoint2Ds == null || footstepData.predictedContactPoint2Ds.isEmpty())
          return Double.NEGATIVE_INFINITY;
 
       ConvexPolygon2D supportPolygon = new ConvexPolygon2D(HumanoidMessageTools.unpackPredictedContactPoints(footstepData));

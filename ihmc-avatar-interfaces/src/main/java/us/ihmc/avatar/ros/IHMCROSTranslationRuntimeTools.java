@@ -327,7 +327,7 @@ public class IHMCROSTranslationRuntimeTools
       message.setSwingTrajectoryBlendDuration(footstep.swingTrajectoryBlendDuration);
 
       List<Point2dRosMessage> predictedContatcPointsRos = new ArrayList<>();
-      if (footstep.predictedContactPoints2D != null)
+      if (footstep.predictedContactPoint2Ds != null)
       {
          for (Point2D predictedContactPoint : HumanoidMessageTools.unpackPredictedContactPoints(footstep))
          {

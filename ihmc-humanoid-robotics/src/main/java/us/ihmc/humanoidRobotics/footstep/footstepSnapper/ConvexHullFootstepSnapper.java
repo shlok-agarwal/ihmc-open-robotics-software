@@ -201,7 +201,7 @@ public class ConvexHullFootstepSnapper implements QuadTreeFootstepSnapper
 
       //get the footstep
       Footstep.FootstepType type = snapFootstep(originalFootstep, heightMap);
-      if (type == Footstep.FootstepType.FULL_FOOTSTEP && originalFootstep.getPredictedContactPoints().size() > 0 )
+      if (type == Footstep.FootstepType.FULL_FOOTSTEP && originalFootstep.getPredictedContactPoint2Ds().size() > 0 )
       {
          throw new RuntimeException(this.getClass().getSimpleName() + "Full Footstep should have null contact points");
       }
@@ -330,7 +330,7 @@ public class ConvexHullFootstepSnapper implements QuadTreeFootstepSnapper
       if (!badPlane)
       {
          adjustFootstepWithoutHeightmap(footstep, height, surfaceNormal);
-         footstep.predictedContactPoints2D.clear();
+         footstep.predictedContactPoint2Ds.clear();
          return Footstep.FootstepType.FULL_FOOTSTEP;
       }
 
@@ -460,7 +460,7 @@ public class ConvexHullFootstepSnapper implements QuadTreeFootstepSnapper
       // determine the footstep with the highest value, then
       footstep.setLocation(maxValueFootstep.getLocation());
       footstep.setOrientation(maxValueFootstep.getOrientation());
-      MessageTools.copyData(maxValueFootstep.getPredictedContactPoints(), footstep.predictedContactPoints2D);
+      MessageTools.copyData(maxValueFootstep.getPredictedContactPoint2Ds(), footstep.predictedContactPoint2Ds);
       return true;
    }
 

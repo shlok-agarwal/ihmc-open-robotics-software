@@ -41,7 +41,7 @@ public class FootstepDataMessage extends Packet<FootstepDataMessage>
          + "For example: to tell the controller to use the entire foot, the predicted contact points would be:\n" + "predicted_contact_points:\n"
          + "- {x: 0.5 * foot_length, y: -0.5 * toe_width}\n" + "- {x: 0.5 * foot_length, y: 0.5 * toe_width}\n"
          + "- {x: -0.5 * foot_length, y: -0.5 * heel_width}\n" + "- {x: -0.5 * foot_length, y: 0.5 * heel_width}\n")
-   public TempPreallocatedList<Point3D> predictedContactPoints2D = new TempPreallocatedList<>(Point3D.class, Point3D::new, 10);
+   public TempPreallocatedList<Point3D> predictedContactPoint2Ds = new TempPreallocatedList<>(Point3D.class, Point3D::new, 10);
 
    @RosExportedField(documentation = "This contains information on what the swing trajectory should be for each step. Recomended is DEFAULT.")
    public byte trajectoryType = TrajectoryType.DEFAULT.toByte();
@@ -90,7 +90,7 @@ public class FootstepDataMessage extends Packet<FootstepDataMessage>
       this.location = new Point3D(other.location);
       this.orientation = new Quaternion(other.orientation);
       this.orientation.checkIfUnitary();
-      MessageTools.copyData(other.predictedContactPoints2D, predictedContactPoints2D);
+      MessageTools.copyData(other.predictedContactPoint2Ds, predictedContactPoint2Ds);
       MessageTools.copyData(other.customPositionWaypoints, customPositionWaypoints);
       MessageTools.copyData(other.swingTrajectory, swingTrajectory);
       this.trajectoryType = other.trajectoryType;
@@ -108,7 +108,7 @@ public class FootstepDataMessage extends Packet<FootstepDataMessage>
       robotSide = other.robotSide;
       location = new Point3D(other.location);
       orientation = new Quaternion(other.orientation);
-      MessageTools.copyData(other.predictedContactPoints2D, predictedContactPoints2D);
+      MessageTools.copyData(other.predictedContactPoint2Ds, predictedContactPoint2Ds);
       MessageTools.copyData(other.customPositionWaypoints, customPositionWaypoints);
       MessageTools.copyData(other.swingTrajectory, swingTrajectory);
       trajectoryType = other.trajectoryType;
@@ -122,9 +122,9 @@ public class FootstepDataMessage extends Packet<FootstepDataMessage>
       setPacketInformation(other);
    }
 
-   public TempPreallocatedList<Point3D> getPredictedContactPoints()
+   public TempPreallocatedList<Point3D> getPredictedContactPoint2Ds()
    {
-      return predictedContactPoints2D;
+      return predictedContactPoint2Ds;
    }
 
    public Point3D getLocation()
@@ -258,9 +258,9 @@ public class FootstepDataMessage extends Packet<FootstepDataMessage>
       ret = location.toString();
       ret += ", YawPitchRoll = " + Arrays.toString(ypr) + "\n";
       ret += "Predicted Contact Points: ";
-      if (predictedContactPoints2D != null)
+      if (predictedContactPoint2Ds != null)
       {
-         ret += "size = " + predictedContactPoints2D.size() + "\n";
+         ret += "size = " + predictedContactPoint2Ds.size() + "\n";
       }
       else
       {
@@ -295,7 +295,7 @@ public class FootstepDataMessage extends Packet<FootstepDataMessage>
          orientationEquals = temp.epsilonEquals(other.orientation, epsilon);
       }
 
-      boolean contactPointsEqual = MessageTools.epsilonEquals(predictedContactPoints2D, other.predictedContactPoints2D, epsilon);
+      boolean contactPointsEqual = MessageTools.epsilonEquals(predictedContactPoint2Ds, other.predictedContactPoint2Ds, epsilon);
       boolean trajectoryWaypointsEqual = MessageTools.epsilonEquals(customPositionWaypoints, other.customPositionWaypoints, epsilon);
       boolean swingTrajectoriesEqual = MessageTools.epsilonEquals(swingTrajectory, other.swingTrajectory, epsilon);
 

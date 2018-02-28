@@ -1856,19 +1856,19 @@ public class HumanoidMessageTools
    {
       if (contactPoints == null)
          return;
-      MessageTools.copyData(Arrays.stream(contactPoints).map(Point3D::new).collect(Collectors.toList()), message.predictedContactPoints2D);
+      MessageTools.copyData(Arrays.stream(contactPoints).map(Point3D::new).collect(Collectors.toList()), message.predictedContactPoint2Ds);
    }
    
    public static void packPredictedContactPoints(FootstepDataMessage message, List<? extends Point2DReadOnly> contactPoints)
    {
       if (contactPoints == null)
          return;
-      MessageTools.copyData(contactPoints.stream().map(Point3D::new).collect(Collectors.toList()), message.predictedContactPoints2D);
+      MessageTools.copyData(contactPoints.stream().map(Point3D::new).collect(Collectors.toList()), message.predictedContactPoint2Ds);
    }
    
    public static List<Point2D> unpackPredictedContactPoints(FootstepDataMessage message)
    {
-      return Arrays.stream(message.predictedContactPoints2D.toArray()).map(Point2D::new).collect(Collectors.toList());
+      return Arrays.stream(message.predictedContactPoint2Ds.toArray()).map(Point2D::new).collect(Collectors.toList());
    }
 
    public static void setGroundQuadTreeSupport(PointCloudWorldPacket pointCloudWorldPacket, Point3DReadOnly[] pointCloud)

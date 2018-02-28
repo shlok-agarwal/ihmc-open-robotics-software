@@ -99,7 +99,7 @@ public class FootstepDataCommand implements Command<FootstepDataCommand, Footste
          }
       }
 
-      TempPreallocatedList<Point3D> originalPredictedContactPoints = message.getPredictedContactPoints();
+      TempPreallocatedList<Point3D> originalPredictedContactPoints = message.getPredictedContactPoint2Ds();
       predictedContactPoints.clear();
       if (originalPredictedContactPoints != null)
       {
