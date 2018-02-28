@@ -50,7 +50,7 @@ public class FallingBoxSimulation
       robotWithGCP.setGroundContactModel(groundModel);
 
       //robot with collision shape.
-      FallingBoxRobotDescription descriptionWithCS = new FallingBoxRobotDescription("robotWithCollisionShape", box, mass, false);
+      FallingBoxRobotDescription descriptionWithCS = new FallingBoxRobotDescription("robotWithCS", box, mass, false);
       FallingBoxCollisionMeshDefinitionDataHolder collisionMeshData = new FallingBoxCollisionMeshDefinitionDataHolder(box);
       descriptionWithCS.addCollisionMeshDefinitionData(collisionMeshData);
       Robot robotWithCS = new RobotFromDescription(descriptionWithCS);
