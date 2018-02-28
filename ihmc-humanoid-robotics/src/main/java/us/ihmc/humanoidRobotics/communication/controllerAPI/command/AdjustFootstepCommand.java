@@ -45,7 +45,7 @@ public class AdjustFootstepCommand implements Command<AdjustFootstepCommand, Adj
       robotSide = RobotSide.fromByte(message.getRobotSide());
       adjustedPosition.setIncludingFrame(ReferenceFrame.getWorldFrame(), message.getLocation());
       adjustedOrientation.setIncludingFrame(ReferenceFrame.getWorldFrame(), message.getOrientation());
-      TempPreallocatedList<Point2D> originalPredictedContactPoints = message.getPredictedContactPoints();
+      TempPreallocatedList<Point3D> originalPredictedContactPoints = message.getPredictedContactPoints();
       predictedContactPoints.clear();
       executionDelayTime = message.getExecutionDelayTime();
       if (originalPredictedContactPoints != null)

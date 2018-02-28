@@ -1,13 +1,16 @@
 package us.ihmc.communication.packets;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import us.ihmc.euclid.axisAngle.AxisAngle;
 import us.ihmc.euclid.geometry.ConvexPolygon2D;
 import us.ihmc.euclid.geometry.tools.EuclidGeometryTools;
 import us.ihmc.euclid.transform.RigidBodyTransform;
 import us.ihmc.euclid.tuple2D.Point2D;
+import us.ihmc.euclid.tuple2D.interfaces.Point2DReadOnly;
 import us.ihmc.euclid.tuple3D.Point3D32;
 import us.ihmc.euclid.tuple3D.Vector3D;
 import us.ihmc.euclid.tuple3D.Vector3D32;
@@ -73,7 +76,8 @@ public class PlanarRegionMessageConverter
       TempPreallocatedList<Polygon2DMessage> convexPolygonsMessage = planarRegionMessage.getConvexPolygons();
       for (int polygonIndex = 0; polygonIndex < convexPolygonsMessage.size(); polygonIndex++)
       {
-         ConvexPolygon2D convexPolygon = new ConvexPolygon2D(convexPolygonsMessage.get(polygonIndex).getVertices().toArray());
+         List<? extends Point2DReadOnly> vertices2D = Arrays.stream(convexPolygonsMessage.get(polygonIndex).getVertices().toArray()).map(Point2D::new).collect(Collectors.toList());
+         ConvexPolygon2D convexPolygon = new ConvexPolygon2D(vertices2D);
          convexPolygons.add(convexPolygon);
       }
 

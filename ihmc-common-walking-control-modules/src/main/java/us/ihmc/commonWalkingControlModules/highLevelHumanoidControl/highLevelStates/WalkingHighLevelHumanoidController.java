@@ -605,9 +605,8 @@ public class WalkingHighLevelHumanoidController implements JointLoadStatusProvid
          }
          else if (!balanceManager.isPushRecoveryEnabled() || balanceManager.isRecoveryImpossible())
          {
-            FrameVector2D fallingDirection = failureDetectionControlModule.getFallingDirection();
-            walkingMessageHandler.reportControllerFailure(fallingDirection);
-            controllerToolbox.reportControllerFailureToListeners(fallingDirection);
+            walkingMessageHandler.reportControllerFailure(failureDetectionControlModule.getFallingDirection3D());
+            controllerToolbox.reportControllerFailureToListeners(failureDetectionControlModule.getFallingDirection2D());
          }
       }
 

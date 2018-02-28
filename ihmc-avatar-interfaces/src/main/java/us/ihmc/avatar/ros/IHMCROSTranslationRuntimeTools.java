@@ -28,6 +28,7 @@ import us.ihmc.communication.ros.generators.RosMessagePacket;
 import us.ihmc.euclid.tuple2D.Point2D;
 import us.ihmc.euclid.tuple3D.Point3D;
 import us.ihmc.humanoidRobotics.communication.packets.FrameInformation;
+import us.ihmc.humanoidRobotics.communication.packets.HumanoidMessageTools;
 import us.ihmc.humanoidRobotics.communication.packets.SE3TrajectoryPointMessage;
 import us.ihmc.humanoidRobotics.communication.packets.manipulation.ArmTrajectoryMessage;
 import us.ihmc.humanoidRobotics.communication.packets.manipulation.HandTrajectoryMessage;
@@ -189,7 +190,7 @@ public class IHMCROSTranslationRuntimeTools
          }
       }
 
-      MessageTools.copyData(predictedContactPoints, ihmcMessage.predictedContactPoints);
+      HumanoidMessageTools.packPredictedContactPoints(ihmcMessage, predictedContactPoints);
       MessageTools.copyData(trajectoryWaypoints, ihmcMessage.customPositionWaypoints);
 
       return ihmcMessage;
@@ -326,9 +327,9 @@ public class IHMCROSTranslationRuntimeTools
       message.setSwingTrajectoryBlendDuration(footstep.swingTrajectoryBlendDuration);
 
       List<Point2dRosMessage> predictedContatcPointsRos = new ArrayList<>();
-      if (footstep.predictedContactPoints != null)
+      if (footstep.predictedContactPoints2D != null)
       {
-         for (Point2D predictedContactPoint : footstep.predictedContactPoints.toArray())
+         for (Point2D predictedContactPoint : HumanoidMessageTools.unpackPredictedContactPoints(footstep))
          {
             predictedContatcPointsRos.add(GenericROSTranslationTools.convertPoint2d(predictedContactPoint));
          }

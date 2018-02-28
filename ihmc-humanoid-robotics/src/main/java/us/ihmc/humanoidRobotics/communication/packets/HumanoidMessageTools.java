@@ -2,7 +2,9 @@ package us.ihmc.humanoidRobotics.communication.packets;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import boofcv.struct.calib.IntrinsicParameters;
 import us.ihmc.commons.MathTools;
@@ -23,7 +25,7 @@ import us.ihmc.euclid.referenceFrame.exceptions.ReferenceFrameMismatchException;
 import us.ihmc.euclid.transform.RigidBodyTransform;
 import us.ihmc.euclid.tuple2D.Point2D;
 import us.ihmc.euclid.tuple2D.Vector2D;
-import us.ihmc.euclid.tuple2D.Vector2D32;
+import us.ihmc.euclid.tuple2D.interfaces.Point2DReadOnly;
 import us.ihmc.euclid.tuple3D.Point3D;
 import us.ihmc.euclid.tuple3D.Point3D32;
 import us.ihmc.euclid.tuple3D.Vector3D;
@@ -129,6 +131,7 @@ import us.ihmc.humanoidRobotics.communication.packets.wholebody.ClearDelayQueueM
 import us.ihmc.humanoidRobotics.communication.packets.wholebody.MessageOfMessages;
 import us.ihmc.humanoidRobotics.communication.toolbox.heightQuadTree.command.HeightQuadTreeToolboxRequestMessage;
 import us.ihmc.humanoidRobotics.footstep.Footstep;
+import us.ihmc.idl.TempPreallocatedList;
 import us.ihmc.robotModels.FullHumanoidRobotModel;
 import us.ihmc.robotModels.FullRobotModelUtils;
 import us.ihmc.robotics.geometry.FrameConvexPolygon2d;
@@ -607,7 +610,7 @@ public class HumanoidMessageTools
       message.robotSide = robotSide.toByte();
       message.location = location;
       message.orientation = orientation;
-      MessageTools.copyData(predictedContactPoints, message.predictedContactPoints);
+      MessageTools.copyData(predictedContactPoints.stream().map(Point3D::new).collect(Collectors.toList()), message.predictedContactPoints);
       return message;
    }
 
@@ -639,7 +642,7 @@ public class HumanoidMessageTools
       footstep.getFootstepPose().checkReferenceFrameMatch(ReferenceFrame.getWorldFrame());
       message.location = new Point3D(location);
       message.orientation = new Quaternion(orientation);
-      MessageTools.copyData(footstep.getPredictedContactPoints(), message.predictedContactPoints);
+      MessageTools.copyData(footstep.getPredictedContactPoints().stream().map(Point3D::new).collect(Collectors.toList()), message.predictedContactPoints);
       return message;
    }
 
@@ -1609,7 +1612,7 @@ public class HumanoidMessageTools
    public static WalkingControllerFailureStatusMessage createWalkingControllerFailureStatusMessage(Vector2D fallingDirection)
    {
       WalkingControllerFailureStatusMessage message = new WalkingControllerFailureStatusMessage();
-      message.fallingDirection = new Vector2D32(fallingDirection);
+      message.fallingDirection.set(fallingDirection);
       return message;
    }
 
@@ -1681,7 +1684,7 @@ public class HumanoidMessageTools
       message.robotSide = robotSide.toByte();
       message.location = location;
       message.orientation = orientation;
-      MessageTools.copyData(predictedContactPoints, message.predictedContactPoints);
+      packPredictedContactPoints(message, predictedContactPoints);
       message.trajectoryType = trajectoryType.toByte();
       message.swingHeight = swingHeight;
       return message;
@@ -1699,7 +1702,7 @@ public class HumanoidMessageTools
       footstep.getFootstepPose().checkReferenceFrameMatch(ReferenceFrame.getWorldFrame());
       message.location = new Point3D(location);
       message.orientation = new Quaternion(orientation);
-      MessageTools.copyData(footstep.getPredictedContactPoints(), message.predictedContactPoints);
+      packPredictedContactPoints(message, footstep.getPredictedContactPoints());
       message.trajectoryType = footstep.getTrajectoryType().toByte();
       message.swingHeight = footstep.getSwingHeight();
       message.swingTrajectoryBlendDuration = footstep.getSwingTrajectoryBlendDuration();
@@ -1849,6 +1852,25 @@ public class HumanoidMessageTools
       return intrinsicParameters;
    }
 
+   public static void packPredictedContactPoints(FootstepDataMessage message, Point2DReadOnly[] contactPoints)
+   {
+      if (contactPoints == null)
+         return;
+      MessageTools.copyData(Arrays.stream(contactPoints).map(Point3D::new).collect(Collectors.toList()), message.predictedContactPoints2D);
+   }
+   
+   public static void packPredictedContactPoints(FootstepDataMessage message, List<? extends Point2DReadOnly> contactPoints)
+   {
+      if (contactPoints == null)
+         return;
+      MessageTools.copyData(contactPoints.stream().map(Point3D::new).collect(Collectors.toList()), message.predictedContactPoints2D);
+   }
+   
+   public static List<Point2D> unpackPredictedContactPoints(FootstepDataMessage message)
+   {
+      return Arrays.stream(message.predictedContactPoints2D.toArray()).map(Point2D::new).collect(Collectors.toList());
+   }
+
    public static void setGroundQuadTreeSupport(PointCloudWorldPacket pointCloudWorldPacket, Point3DReadOnly[] pointCloud)
    {
       pointCloudWorldPacket.groundQuadTreeSupport.reset();
@@ -1994,47 +2016,52 @@ public class HumanoidMessageTools
 
       if (robotSide == RobotSide.LEFT)
       {
-         capturabilityBasedStatus.leftFootSupportPolygon.clear();
+         capturabilityBasedStatus.leftFootSupportPolygon2D.clear();
       }
       else
       {
-         capturabilityBasedStatus.rightFootSupportPolygon.clear();
+         capturabilityBasedStatus.rightFootSupportPolygon2D.clear();
       }
 
       for (int i = 0; i < numberOfVertices; i++)
       {
          if (robotSide == RobotSide.LEFT)
          {
-            footPolygon.getVertex(i, capturabilityBasedStatus.leftFootSupportPolygon.add());
+            capturabilityBasedStatus.leftFootSupportPolygon2D.add().set(footPolygon.getVertex(i), 0.0);
          }
          else
          {
-            footPolygon.getVertex(i, capturabilityBasedStatus.rightFootSupportPolygon.add());
+            capturabilityBasedStatus.rightFootSupportPolygon2D.add().set(footPolygon.getVertex(i), 0.0);
          }
       }
    }
 
    public static FrameConvexPolygon2d unpackFootSupportPolygon(CapturabilityBasedStatus capturabilityBasedStatus, RobotSide robotSide)
    {
-      if (robotSide == RobotSide.LEFT && capturabilityBasedStatus.leftFootSupportPolygon.size() > 0)
-         return new FrameConvexPolygon2d(ReferenceFrame.getWorldFrame(), capturabilityBasedStatus.leftFootSupportPolygon.toArray());
-      else if (capturabilityBasedStatus.rightFootSupportPolygon != null)
-         return new FrameConvexPolygon2d(ReferenceFrame.getWorldFrame(), capturabilityBasedStatus.rightFootSupportPolygon.toArray());
+      if (robotSide == RobotSide.LEFT && capturabilityBasedStatus.leftFootSupportPolygon2D.size() > 0)
+         return new FrameConvexPolygon2d(ReferenceFrame.getWorldFrame(), toPoint2Ds(capturabilityBasedStatus.leftFootSupportPolygon2D));
+      else if (capturabilityBasedStatus.rightFootSupportPolygon2D != null)
+         return new FrameConvexPolygon2d(ReferenceFrame.getWorldFrame(), toPoint2Ds(capturabilityBasedStatus.rightFootSupportPolygon2D));
       else
          return new FrameConvexPolygon2d(ReferenceFrame.getWorldFrame());
    }
 
+   private static Point2D[] toPoint2Ds(TempPreallocatedList<Point3D> point3Ds)
+   {
+      return Arrays.stream(point3Ds.toArray()).map(Point2D::new).toArray(Point2D[]::new);
+   }
+
    public static boolean unpackIsInDoubleSupport(CapturabilityBasedStatus capturabilityBasedStatus)
    {
-      return capturabilityBasedStatus.leftFootSupportPolygon.size() != 0 & capturabilityBasedStatus.rightFootSupportPolygon.size() != 0;
+      return capturabilityBasedStatus.leftFootSupportPolygon2D.size() != 0 & capturabilityBasedStatus.rightFootSupportPolygon2D.size() != 0;
    }
 
    public static boolean unpackIsSupportFoot(CapturabilityBasedStatus capturabilityBasedStatus, RobotSide robotside)
    {
       if (robotside == RobotSide.LEFT)
-         return capturabilityBasedStatus.leftFootSupportPolygon.size() != 0;
+         return capturabilityBasedStatus.leftFootSupportPolygon2D.size() != 0;
       else
-         return capturabilityBasedStatus.rightFootSupportPolygon.size() != 0;
+         return capturabilityBasedStatus.rightFootSupportPolygon2D.size() != 0;
    }
 
    public static void packManifold(ReachingManifoldMessage reachingManifoldMessage, byte[] configurationSpaces, double[] lowerLimits, double[] upperLimits)

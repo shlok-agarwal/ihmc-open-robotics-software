@@ -4,7 +4,7 @@ import us.ihmc.communication.packets.MessageTools;
 import us.ihmc.communication.packets.Packet;
 import us.ihmc.communication.packets.PlanarRegionsListMessage;
 import us.ihmc.euclid.geometry.Pose2D;
-import us.ihmc.euclid.tuple2D.Point2D;
+import us.ihmc.euclid.tuple3D.Point3D;
 import us.ihmc.idl.TempPreallocatedList;
 
 public class FootstepPlanningToolboxOutputStatus extends Packet<FootstepPlanningToolboxOutputStatus>
@@ -23,7 +23,7 @@ public class FootstepPlanningToolboxOutputStatus extends Packet<FootstepPlanning
    public PlanarRegionsListMessage planarRegionsList = new PlanarRegionsListMessage();
 
    // body path planner fields
-   public TempPreallocatedList<Point2D> bodyPath = new TempPreallocatedList<>(Point2D.class, Point2D::new, 50);
+   public TempPreallocatedList<Point3D> bodyPath = new TempPreallocatedList<>(Point3D.class, Point3D::new, 50);
    public Pose2D lowLevelPlannerGoal = new Pose2D();
 
    public FootstepPlanningToolboxOutputStatus()

@@ -1,7 +1,5 @@
 package us.ihmc.humanoidRobotics.communication.controllerAPI.command;
 
-import java.util.ArrayList;
-
 import us.ihmc.communication.controllerAPI.command.Command;
 import us.ihmc.euclid.referenceFrame.FramePoint3D;
 import us.ihmc.euclid.referenceFrame.FrameQuaternion;
@@ -101,7 +99,7 @@ public class FootstepDataCommand implements Command<FootstepDataCommand, Footste
          }
       }
 
-      TempPreallocatedList<Point2D> originalPredictedContactPoints = message.getPredictedContactPoints();
+      TempPreallocatedList<Point3D> originalPredictedContactPoints = message.getPredictedContactPoints();
       predictedContactPoints.clear();
       if (originalPredictedContactPoints != null)
       {
