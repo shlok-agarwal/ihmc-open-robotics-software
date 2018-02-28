@@ -1,5 +1,13 @@
 package us.ihmc.humanoidRobotics.communication.util;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import us.ihmc.communication.net.NetClassList.PacketTrimmer;
 import us.ihmc.communication.packets.BoundingBoxesPacket;
 import us.ihmc.communication.packets.IMUPacket;
 import us.ihmc.communication.packets.KinematicsToolboxOutputStatus;
@@ -64,14 +72,33 @@ import us.ihmc.sensorProcessing.communication.packets.dataobjects.RobotConfigura
  */
 public final class MessageTrimmingTools
 {
-   public static interface MessageTrimmer<T>
+   public static final Map<Class<?>, PacketTrimmer<?>> classToPacketTrimmerMap = getClassToPacketTrimmerMap();
+
+   private static Map<Class<?>, PacketTrimmer<?>> getClassToPacketTrimmerMap()
    {
-      T trim(T messageToTrim);
+      Map<Class<?>, PacketTrimmer<?>> map = new HashMap<>();
+      Method[] declaredMethods = MessageTrimmingTools.class.getDeclaredMethods();
+      for (Method method : declaredMethods)
+      {
+         if (method.getName().startsWith("create") && method.getName().endsWith("Trimmer") && method.getReturnType() == PacketTrimmer.class)
+         {
+            Class<?> type = (Class<?>) ((ParameterizedType) method.getGenericReturnType()).getActualTypeArguments()[0];
+            try
+            {
+               map.put(type, (PacketTrimmer<?>) method.invoke(null));
+            }
+            catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
+            {
+               e.printStackTrace();
+            }
+         }
+      }
+      return Collections.unmodifiableMap(map);
    }
 
-   public static MessageTrimmer<AdjustFootstepMessage> createAdjustFootstepMessageTrimmer()
+   public static PacketTrimmer<AdjustFootstepMessage> createAdjustFootstepMessageTrimmer()
    {
-      return new MessageTrimmer<AdjustFootstepMessage>()
+      return new PacketTrimmer<AdjustFootstepMessage>()
       {
          @Override
          public AdjustFootstepMessage trim(AdjustFootstepMessage messageToTrim)
@@ -84,11 +111,11 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<ArmTrajectoryMessage> createArmTrajectoryMessageTrimmer()
+   public static PacketTrimmer<ArmTrajectoryMessage> createArmTrajectoryMessageTrimmer()
    {
-      MessageTrimmer<JointspaceTrajectoryMessage> messageTrimmer = createJointspaceTrajectoryMessageTrimmer();
+      PacketTrimmer<JointspaceTrajectoryMessage> messageTrimmer = createJointspaceTrajectoryMessageTrimmer();
 
-      return new MessageTrimmer<ArmTrajectoryMessage>()
+      return new PacketTrimmer<ArmTrajectoryMessage>()
       {
          @Override
          public ArmTrajectoryMessage trim(ArmTrajectoryMessage messageToTrim)
@@ -101,9 +128,9 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<BoundingBoxesPacket> createBoundingBoxesPacketTrimmer()
+   public static PacketTrimmer<BoundingBoxesPacket> createBoundingBoxesPacketTrimmer()
    {
-      return new MessageTrimmer<BoundingBoxesPacket>()
+      return new PacketTrimmer<BoundingBoxesPacket>()
       {
          @Override
          public BoundingBoxesPacket trim(BoundingBoxesPacket messageToTrim)
@@ -116,9 +143,9 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<CapturabilityBasedStatus> createCapturabilityBasedStatusTrimmer()
+   public static PacketTrimmer<CapturabilityBasedStatus> createCapturabilityBasedStatusTrimmer()
    {
-      return new MessageTrimmer<CapturabilityBasedStatus>()
+      return new PacketTrimmer<CapturabilityBasedStatus>()
       {
          @Override
          public CapturabilityBasedStatus trim(CapturabilityBasedStatus messageToTrim)
@@ -132,11 +159,11 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<CenterOfMassTrajectoryMessage> createCenterOfMassTrajectoryMessageTrimmer()
+   public static PacketTrimmer<CenterOfMassTrajectoryMessage> createCenterOfMassTrajectoryMessageTrimmer()
    {
-      MessageTrimmer<EuclideanTrajectoryMessage> messageTrimmer = createEuclideanTrajectoryMessageTrimmer();
+      PacketTrimmer<EuclideanTrajectoryMessage> messageTrimmer = createEuclideanTrajectoryMessageTrimmer();
 
-      return new MessageTrimmer<CenterOfMassTrajectoryMessage>()
+      return new PacketTrimmer<CenterOfMassTrajectoryMessage>()
       {
          @Override
          public CenterOfMassTrajectoryMessage trim(CenterOfMassTrajectoryMessage messageToTrim)
@@ -149,12 +176,12 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<ChestHybridJointspaceTaskspaceTrajectoryMessage> createChestHybridJointspaceTaskspaceTrajectoryMessageTrimmer()
+   public static PacketTrimmer<ChestHybridJointspaceTaskspaceTrajectoryMessage> createChestHybridJointspaceTaskspaceTrajectoryMessageTrimmer()
    {
-      MessageTrimmer<JointspaceTrajectoryMessage> messageTrimmerJointspace = createJointspaceTrajectoryMessageTrimmer();
-      MessageTrimmer<SO3TrajectoryMessage> messageTrimmerTaskspace = createSO3TrajectoryMessageTrimmer();
+      PacketTrimmer<JointspaceTrajectoryMessage> messageTrimmerJointspace = createJointspaceTrajectoryMessageTrimmer();
+      PacketTrimmer<SO3TrajectoryMessage> messageTrimmerTaskspace = createSO3TrajectoryMessageTrimmer();
 
-      return new MessageTrimmer<ChestHybridJointspaceTaskspaceTrajectoryMessage>()
+      return new PacketTrimmer<ChestHybridJointspaceTaskspaceTrajectoryMessage>()
       {
          @Override
          public ChestHybridJointspaceTaskspaceTrajectoryMessage trim(ChestHybridJointspaceTaskspaceTrajectoryMessage messageToTrim)
@@ -168,11 +195,11 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<ChestTrajectoryMessage> createChestTrajectoryMessageTrimmer()
+   public static PacketTrimmer<ChestTrajectoryMessage> createChestTrajectoryMessageTrimmer()
    {
-      MessageTrimmer<SO3TrajectoryMessage> messageTrimmer = createSO3TrajectoryMessageTrimmer();
+      PacketTrimmer<SO3TrajectoryMessage> messageTrimmer = createSO3TrajectoryMessageTrimmer();
 
-      return new MessageTrimmer<ChestTrajectoryMessage>()
+      return new PacketTrimmer<ChestTrajectoryMessage>()
       {
          @Override
          public ChestTrajectoryMessage trim(ChestTrajectoryMessage messageToTrim)
@@ -185,9 +212,9 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<EuclideanTrajectoryMessage> createEuclideanTrajectoryMessageTrimmer()
+   public static PacketTrimmer<EuclideanTrajectoryMessage> createEuclideanTrajectoryMessageTrimmer()
    {
-      return new MessageTrimmer<EuclideanTrajectoryMessage>()
+      return new PacketTrimmer<EuclideanTrajectoryMessage>()
       {
          @Override
          public EuclideanTrajectoryMessage trim(EuclideanTrajectoryMessage messageToTrim)
@@ -201,9 +228,9 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<FootstepDataListMessage> createFootstepDataListMessageTrimmer()
+   public static PacketTrimmer<FootstepDataListMessage> createFootstepDataListMessageTrimmer()
    {
-      return new MessageTrimmer<FootstepDataListMessage>()
+      return new PacketTrimmer<FootstepDataListMessage>()
       {
          @Override
          public FootstepDataListMessage trim(FootstepDataListMessage messageToTrim)
@@ -216,9 +243,9 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<FootstepDataMessage> createFootstepDataMessageTrimmer()
+   public static PacketTrimmer<FootstepDataMessage> createFootstepDataMessageTrimmer()
    {
-      return new MessageTrimmer<FootstepDataMessage>()
+      return new PacketTrimmer<FootstepDataMessage>()
       {
          @Override
          public FootstepDataMessage trim(FootstepDataMessage messageToTrim)
@@ -234,9 +261,9 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<FootstepPathPlanPacket> createFootstepPathPlanPacketTrimmer()
+   public static PacketTrimmer<FootstepPathPlanPacket> createFootstepPathPlanPacketTrimmer()
    {
-      return new MessageTrimmer<FootstepPathPlanPacket>()
+      return new PacketTrimmer<FootstepPathPlanPacket>()
       {
          @Override
          public FootstepPathPlanPacket trim(FootstepPathPlanPacket messageToTrim)
@@ -250,11 +277,11 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<FootstepPlanningRequestPacket> createFootstepPlanningRequestPacketTrimmer()
+   public static PacketTrimmer<FootstepPlanningRequestPacket> createFootstepPlanningRequestPacketTrimmer()
    {
-      return new MessageTrimmer<FootstepPlanningRequestPacket>()
+      return new PacketTrimmer<FootstepPlanningRequestPacket>()
       {
-         MessageTrimmer<PlanarRegionsListMessage> messageTrimmer = createPlanarRegionsListMessageTrimmer();
+         PacketTrimmer<PlanarRegionsListMessage> messageTrimmer = createPlanarRegionsListMessageTrimmer();
 
          @Override
          public FootstepPlanningRequestPacket trim(FootstepPlanningRequestPacket messageToTrim)
@@ -267,12 +294,12 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<FootstepPlanningToolboxOutputStatus> createFootstepPlanningToolboxOutputStatusTrimmer()
+   public static PacketTrimmer<FootstepPlanningToolboxOutputStatus> createFootstepPlanningToolboxOutputStatusTrimmer()
    {
-      return new MessageTrimmer<FootstepPlanningToolboxOutputStatus>()
+      return new PacketTrimmer<FootstepPlanningToolboxOutputStatus>()
       {
-         MessageTrimmer<PlanarRegionsListMessage> planarRegionsTrimmer = createPlanarRegionsListMessageTrimmer();
-         MessageTrimmer<FootstepDataListMessage> footstepListTrimmer = createFootstepDataListMessageTrimmer();
+         PacketTrimmer<PlanarRegionsListMessage> planarRegionsTrimmer = createPlanarRegionsListMessageTrimmer();
+         PacketTrimmer<FootstepDataListMessage> footstepListTrimmer = createFootstepDataListMessageTrimmer();
 
          @Override
          public FootstepPlanningToolboxOutputStatus trim(FootstepPlanningToolboxOutputStatus messageToTrim)
@@ -287,11 +314,11 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<FootstepPlanRequestPacket> createFootstepPlanRequestPacketTrimmer()
+   public static PacketTrimmer<FootstepPlanRequestPacket> createFootstepPlanRequestPacketTrimmer()
    {
-      return new MessageTrimmer<FootstepPlanRequestPacket>()
+      return new PacketTrimmer<FootstepPlanRequestPacket>()
       {
-         MessageTrimmer<FootstepDataMessage> messageTrimmer = createFootstepDataMessageTrimmer();
+         PacketTrimmer<FootstepDataMessage> messageTrimmer = createFootstepDataMessageTrimmer();
 
          @Override
          public FootstepPlanRequestPacket trim(FootstepPlanRequestPacket messageToTrim)
@@ -305,11 +332,11 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<FootTrajectoryMessage> createFootTrajectoryMessageTrimmer()
+   public static PacketTrimmer<FootTrajectoryMessage> createFootTrajectoryMessageTrimmer()
    {
-      MessageTrimmer<SE3TrajectoryMessage> se3TrajectoryMessageTrimmer = createSE3TrajectoryMessageTrimmer();
+      PacketTrimmer<SE3TrajectoryMessage> se3TrajectoryMessageTrimmer = createSE3TrajectoryMessageTrimmer();
 
-      return new MessageTrimmer<FootTrajectoryMessage>()
+      return new PacketTrimmer<FootTrajectoryMessage>()
       {
          @Override
          public FootTrajectoryMessage trim(FootTrajectoryMessage messageToTrim)
@@ -322,12 +349,12 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<HandHybridJointspaceTaskspaceTrajectoryMessage> createHandHybridJointspaceTaskspaceTrajectoryMessageTrimmer()
+   public static PacketTrimmer<HandHybridJointspaceTaskspaceTrajectoryMessage> createHandHybridJointspaceTaskspaceTrajectoryMessageTrimmer()
    {
-      MessageTrimmer<JointspaceTrajectoryMessage> messageTrimmerJointspace = createJointspaceTrajectoryMessageTrimmer();
-      MessageTrimmer<SE3TrajectoryMessage> messageTrimmerTaskspace = createSE3TrajectoryMessageTrimmer();
+      PacketTrimmer<JointspaceTrajectoryMessage> messageTrimmerJointspace = createJointspaceTrajectoryMessageTrimmer();
+      PacketTrimmer<SE3TrajectoryMessage> messageTrimmerTaskspace = createSE3TrajectoryMessageTrimmer();
 
-      return new MessageTrimmer<HandHybridJointspaceTaskspaceTrajectoryMessage>()
+      return new PacketTrimmer<HandHybridJointspaceTaskspaceTrajectoryMessage>()
       {
          @Override
          public HandHybridJointspaceTaskspaceTrajectoryMessage trim(HandHybridJointspaceTaskspaceTrajectoryMessage messageToTrim)
@@ -341,11 +368,11 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<HandLoadBearingMessage> createHandLoadBearingMessageTrimmer()
+   public static PacketTrimmer<HandLoadBearingMessage> createHandLoadBearingMessageTrimmer()
    {
-      MessageTrimmer<JointspaceTrajectoryMessage> messageTrimmer = createJointspaceTrajectoryMessageTrimmer();
+      PacketTrimmer<JointspaceTrajectoryMessage> messageTrimmer = createJointspaceTrajectoryMessageTrimmer();
 
-      return new MessageTrimmer<HandLoadBearingMessage>()
+      return new PacketTrimmer<HandLoadBearingMessage>()
       {
          @Override
          public HandLoadBearingMessage trim(HandLoadBearingMessage messageToTrim)
@@ -358,11 +385,11 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<HandTrajectoryMessage> createHandTrajectoryMessageTrimmer()
+   public static PacketTrimmer<HandTrajectoryMessage> createHandTrajectoryMessageTrimmer()
    {
-      MessageTrimmer<SE3TrajectoryMessage> messageTrimmer = createSE3TrajectoryMessageTrimmer();
+      PacketTrimmer<SE3TrajectoryMessage> messageTrimmer = createSE3TrajectoryMessageTrimmer();
 
-      return new MessageTrimmer<HandTrajectoryMessage>()
+      return new PacketTrimmer<HandTrajectoryMessage>()
       {
          @Override
          public HandTrajectoryMessage trim(HandTrajectoryMessage messageToTrim)
@@ -375,12 +402,12 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<HeadHybridJointspaceTaskspaceTrajectoryMessage> createHeadHybridJointspaceTaskspaceTrajectoryMessageTrimmer()
+   public static PacketTrimmer<HeadHybridJointspaceTaskspaceTrajectoryMessage> createHeadHybridJointspaceTaskspaceTrajectoryMessageTrimmer()
    {
-      MessageTrimmer<JointspaceTrajectoryMessage> messageTrimmerJointspace = createJointspaceTrajectoryMessageTrimmer();
-      MessageTrimmer<SO3TrajectoryMessage> messageTrimmerTaskspace = createSO3TrajectoryMessageTrimmer();
+      PacketTrimmer<JointspaceTrajectoryMessage> messageTrimmerJointspace = createJointspaceTrajectoryMessageTrimmer();
+      PacketTrimmer<SO3TrajectoryMessage> messageTrimmerTaskspace = createSO3TrajectoryMessageTrimmer();
 
-      return new MessageTrimmer<HeadHybridJointspaceTaskspaceTrajectoryMessage>()
+      return new PacketTrimmer<HeadHybridJointspaceTaskspaceTrajectoryMessage>()
       {
          @Override
          public HeadHybridJointspaceTaskspaceTrajectoryMessage trim(HeadHybridJointspaceTaskspaceTrajectoryMessage messageToTrim)
@@ -394,11 +421,11 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<HeadTrajectoryMessage> createHeadTrajectoryMessageTrimmer()
+   public static PacketTrimmer<HeadTrajectoryMessage> createHeadTrajectoryMessageTrimmer()
    {
-      MessageTrimmer<SO3TrajectoryMessage> messageTrimmer = createSO3TrajectoryMessageTrimmer();
+      PacketTrimmer<SO3TrajectoryMessage> messageTrimmer = createSO3TrajectoryMessageTrimmer();
 
-      return new MessageTrimmer<HeadTrajectoryMessage>()
+      return new PacketTrimmer<HeadTrajectoryMessage>()
       {
          @Override
          public HeadTrajectoryMessage trim(HeadTrajectoryMessage messageToTrim)
@@ -411,9 +438,9 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<HeightQuadTreeMessage> createHeightQuadTreeMessageTrimmer()
+   public static PacketTrimmer<HeightQuadTreeMessage> createHeightQuadTreeMessageTrimmer()
    {
-      return new MessageTrimmer<HeightQuadTreeMessage>()
+      return new PacketTrimmer<HeightQuadTreeMessage>()
       {
          @Override
          public HeightQuadTreeMessage trim(HeightQuadTreeMessage messageToTrim)
@@ -426,9 +453,9 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<JointspaceTrajectoryMessage> createJointspaceTrajectoryMessageTrimmer()
+   public static PacketTrimmer<JointspaceTrajectoryMessage> createJointspaceTrajectoryMessageTrimmer()
    {
-      return new MessageTrimmer<JointspaceTrajectoryMessage>()
+      return new PacketTrimmer<JointspaceTrajectoryMessage>()
       {
          @Override
          public JointspaceTrajectoryMessage trim(JointspaceTrajectoryMessage messageToTrim)
@@ -442,11 +469,11 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<MomentumTrajectoryMessage> createMomentumTrajectoryMessageTrimmer()
+   public static PacketTrimmer<MomentumTrajectoryMessage> createMomentumTrajectoryMessageTrimmer()
    {
-      MessageTrimmer<EuclideanTrajectoryMessage> messageTrimmer = createEuclideanTrajectoryMessageTrimmer();
+      PacketTrimmer<EuclideanTrajectoryMessage> messageTrimmer = createEuclideanTrajectoryMessageTrimmer();
 
-      return new MessageTrimmer<MomentumTrajectoryMessage>()
+      return new PacketTrimmer<MomentumTrajectoryMessage>()
       {
          @Override
          public MomentumTrajectoryMessage trim(MomentumTrajectoryMessage messageToTrim)
@@ -459,11 +486,11 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<NeckTrajectoryMessage> createNeckTrajectoryMessageTrimmer()
+   public static PacketTrimmer<NeckTrajectoryMessage> createNeckTrajectoryMessageTrimmer()
    {
-      MessageTrimmer<JointspaceTrajectoryMessage> messageTrimmer = createJointspaceTrajectoryMessageTrimmer();
+      PacketTrimmer<JointspaceTrajectoryMessage> messageTrimmer = createJointspaceTrajectoryMessageTrimmer();
 
-      return new MessageTrimmer<NeckTrajectoryMessage>()
+      return new PacketTrimmer<NeckTrajectoryMessage>()
       {
          @Override
          public NeckTrajectoryMessage trim(NeckTrajectoryMessage messageToTrim)
@@ -476,11 +503,11 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<ObjectDetectorResultPacket> createObjectDetectorResultPacketTrimmer()
+   public static PacketTrimmer<ObjectDetectorResultPacket> createObjectDetectorResultPacketTrimmer()
    {
-      MessageTrimmer<BoundingBoxesPacket> messageTrimmer = createBoundingBoxesPacketTrimmer();
+      PacketTrimmer<BoundingBoxesPacket> messageTrimmer = createBoundingBoxesPacketTrimmer();
 
-      return new MessageTrimmer<ObjectDetectorResultPacket>()
+      return new PacketTrimmer<ObjectDetectorResultPacket>()
       {
          @Override
          public ObjectDetectorResultPacket trim(ObjectDetectorResultPacket messageToTrim)
@@ -493,9 +520,9 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<OneDoFJointTrajectoryMessage> createOneDoFJointTrajectoryMessageTrimmer()
+   public static PacketTrimmer<OneDoFJointTrajectoryMessage> createOneDoFJointTrajectoryMessageTrimmer()
    {
-      return new MessageTrimmer<OneDoFJointTrajectoryMessage>()
+      return new PacketTrimmer<OneDoFJointTrajectoryMessage>()
       {
          @Override
          public OneDoFJointTrajectoryMessage trim(OneDoFJointTrajectoryMessage messageToTrim)
@@ -509,11 +536,11 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<PelvisHeightTrajectoryMessage> createPelvisHeightTrajectoryMessageTrimmer()
+   public static PacketTrimmer<PelvisHeightTrajectoryMessage> createPelvisHeightTrajectoryMessageTrimmer()
    {
-      MessageTrimmer<EuclideanTrajectoryMessage> messageTrimmer = createEuclideanTrajectoryMessageTrimmer();
+      PacketTrimmer<EuclideanTrajectoryMessage> messageTrimmer = createEuclideanTrajectoryMessageTrimmer();
 
-      return new MessageTrimmer<PelvisHeightTrajectoryMessage>()
+      return new PacketTrimmer<PelvisHeightTrajectoryMessage>()
       {
          @Override
          public PelvisHeightTrajectoryMessage trim(PelvisHeightTrajectoryMessage messageToTrim)
@@ -526,11 +553,11 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<PelvisOrientationTrajectoryMessage> createPelvisOrientationTrajectoryMessageTrimmer()
+   public static PacketTrimmer<PelvisOrientationTrajectoryMessage> createPelvisOrientationTrajectoryMessageTrimmer()
    {
-      MessageTrimmer<SO3TrajectoryMessage> messageTrimmer = createSO3TrajectoryMessageTrimmer();
+      PacketTrimmer<SO3TrajectoryMessage> messageTrimmer = createSO3TrajectoryMessageTrimmer();
 
-      return new MessageTrimmer<PelvisOrientationTrajectoryMessage>()
+      return new PacketTrimmer<PelvisOrientationTrajectoryMessage>()
       {
          @Override
          public PelvisOrientationTrajectoryMessage trim(PelvisOrientationTrajectoryMessage messageToTrim)
@@ -543,11 +570,11 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<PelvisTrajectoryMessage> createPelvisTrajectoryMessageTrimmer()
+   public static PacketTrimmer<PelvisTrajectoryMessage> createPelvisTrajectoryMessageTrimmer()
    {
-      MessageTrimmer<SE3TrajectoryMessage> messageTrimmer = createSE3TrajectoryMessageTrimmer();
+      PacketTrimmer<SE3TrajectoryMessage> messageTrimmer = createSE3TrajectoryMessageTrimmer();
 
-      return new MessageTrimmer<PelvisTrajectoryMessage>()
+      return new PacketTrimmer<PelvisTrajectoryMessage>()
       {
          @Override
          public PelvisTrajectoryMessage trim(PelvisTrajectoryMessage messageToTrim)
@@ -560,11 +587,11 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<PlanarRegionMessage> createPlanarRegionMessageTrimmer()
+   public static PacketTrimmer<PlanarRegionMessage> createPlanarRegionMessageTrimmer()
    {
-      MessageTrimmer<Polygon2DMessage> messageTrimmer = createPolygon2DMessageTrimmer();
+      PacketTrimmer<Polygon2DMessage> messageTrimmer = createPolygon2DMessageTrimmer();
 
-      return new MessageTrimmer<PlanarRegionMessage>()
+      return new PacketTrimmer<PlanarRegionMessage>()
       {
          @Override
          public PlanarRegionMessage trim(PlanarRegionMessage messageToTrim)
@@ -578,9 +605,9 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<PlanarRegionsListMessage> createPlanarRegionsListMessageTrimmer()
+   public static PacketTrimmer<PlanarRegionsListMessage> createPlanarRegionsListMessageTrimmer()
    {
-      return new MessageTrimmer<PlanarRegionsListMessage>()
+      return new PacketTrimmer<PlanarRegionsListMessage>()
       {
          @Override
          public PlanarRegionsListMessage trim(PlanarRegionsListMessage messageToTrim)
@@ -593,9 +620,9 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<Polygon2DMessage> createPolygon2DMessageTrimmer()
+   public static PacketTrimmer<Polygon2DMessage> createPolygon2DMessageTrimmer()
    {
-      return new MessageTrimmer<Polygon2DMessage>()
+      return new PacketTrimmer<Polygon2DMessage>()
       {
          @Override
          public Polygon2DMessage trim(Polygon2DMessage messageToTrim)
@@ -608,9 +635,9 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<RobotConfigurationData> createRobotConfigurationDataTrimmer()
+   public static PacketTrimmer<RobotConfigurationData> createRobotConfigurationDataTrimmer()
    {
-      return new MessageTrimmer<RobotConfigurationData>()
+      return new PacketTrimmer<RobotConfigurationData>()
       {
          @Override
          public RobotConfigurationData trim(RobotConfigurationData messageToTrim)
@@ -625,9 +652,9 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<SE3TrajectoryMessage> createSE3TrajectoryMessageTrimmer()
+   public static PacketTrimmer<SE3TrajectoryMessage> createSE3TrajectoryMessageTrimmer()
    {
-      return new MessageTrimmer<SE3TrajectoryMessage>()
+      return new PacketTrimmer<SE3TrajectoryMessage>()
       {
          @Override
          public SE3TrajectoryMessage trim(SE3TrajectoryMessage messageToTrim)
@@ -641,12 +668,12 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<SnapFootstepPacket> createSnapFootstepPacketTrimmer()
+   public static PacketTrimmer<SnapFootstepPacket> createSnapFootstepPacketTrimmer()
    {
 
-      return new MessageTrimmer<SnapFootstepPacket>()
+      return new PacketTrimmer<SnapFootstepPacket>()
       {
-         MessageTrimmer<FootstepDataMessage> messageTrimmer = createFootstepDataMessageTrimmer();
+         PacketTrimmer<FootstepDataMessage> messageTrimmer = createFootstepDataMessageTrimmer();
 
          @Override
          public SnapFootstepPacket trim(SnapFootstepPacket messageToTrim)
@@ -659,9 +686,9 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<SO3TrajectoryMessage> createSO3TrajectoryMessageTrimmer()
+   public static PacketTrimmer<SO3TrajectoryMessage> createSO3TrajectoryMessageTrimmer()
    {
-      return new MessageTrimmer<SO3TrajectoryMessage>()
+      return new PacketTrimmer<SO3TrajectoryMessage>()
       {
          @Override
          public SO3TrajectoryMessage trim(SO3TrajectoryMessage messageToTrim)
@@ -675,11 +702,11 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<SpineTrajectoryMessage> createSpineTrajectoryMessageTrimmer()
+   public static PacketTrimmer<SpineTrajectoryMessage> createSpineTrajectoryMessageTrimmer()
    {
-      MessageTrimmer<JointspaceTrajectoryMessage> messageTrimmer = createJointspaceTrajectoryMessageTrimmer();
+      PacketTrimmer<JointspaceTrajectoryMessage> messageTrimmer = createJointspaceTrajectoryMessageTrimmer();
 
-      return new MessageTrimmer<SpineTrajectoryMessage>()
+      return new PacketTrimmer<SpineTrajectoryMessage>()
       {
          @Override
          public SpineTrajectoryMessage trim(SpineTrajectoryMessage messageToTrim)
@@ -692,10 +719,10 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<WaypointBasedTrajectoryMessage> createWaypointBasedTrajectoryMessageTrimmer()
+   public static PacketTrimmer<WaypointBasedTrajectoryMessage> createWaypointBasedTrajectoryMessageTrimmer()
    {
 
-      return new MessageTrimmer<WaypointBasedTrajectoryMessage>()
+      return new PacketTrimmer<WaypointBasedTrajectoryMessage>()
       {
          @Override
          public WaypointBasedTrajectoryMessage trim(WaypointBasedTrajectoryMessage messageToTrim)
@@ -708,16 +735,16 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<WholeBodyTrajectoryMessage> createWholeBodyTrajectoryMessageTrimmer()
+   public static PacketTrimmer<WholeBodyTrajectoryMessage> createWholeBodyTrajectoryMessageTrimmer()
    {
-      MessageTrimmer<ArmTrajectoryMessage> armMessageTrimmer = createArmTrajectoryMessageTrimmer();
-      MessageTrimmer<HandTrajectoryMessage> handMessageTrimmer = createHandTrajectoryMessageTrimmer();
-      MessageTrimmer<FootTrajectoryMessage> footMessageTrimmer = createFootTrajectoryMessageTrimmer();
-      MessageTrimmer<ChestTrajectoryMessage> chestMessageTrimmer = createChestTrajectoryMessageTrimmer();
-      MessageTrimmer<HeadTrajectoryMessage> headMessageTrimmer = createHeadTrajectoryMessageTrimmer();
-      MessageTrimmer<PelvisTrajectoryMessage> pelvisMessageTrimmer = createPelvisTrajectoryMessageTrimmer();
+      PacketTrimmer<ArmTrajectoryMessage> armMessageTrimmer = createArmTrajectoryMessageTrimmer();
+      PacketTrimmer<HandTrajectoryMessage> handMessageTrimmer = createHandTrajectoryMessageTrimmer();
+      PacketTrimmer<FootTrajectoryMessage> footMessageTrimmer = createFootTrajectoryMessageTrimmer();
+      PacketTrimmer<ChestTrajectoryMessage> chestMessageTrimmer = createChestTrajectoryMessageTrimmer();
+      PacketTrimmer<HeadTrajectoryMessage> headMessageTrimmer = createHeadTrajectoryMessageTrimmer();
+      PacketTrimmer<PelvisTrajectoryMessage> pelvisMessageTrimmer = createPelvisTrajectoryMessageTrimmer();
 
-      return new MessageTrimmer<WholeBodyTrajectoryMessage>()
+      return new PacketTrimmer<WholeBodyTrajectoryMessage>()
       {
          @Override
          public WholeBodyTrajectoryMessage trim(WholeBodyTrajectoryMessage messageToTrim)
@@ -738,10 +765,10 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<WholeBodyTrajectoryToolboxMessage> createWholeBodyTrajectoryToolboxMessageTrimmer()
+   public static PacketTrimmer<WholeBodyTrajectoryToolboxMessage> createWholeBodyTrajectoryToolboxMessageTrimmer()
    {
 
-      return new MessageTrimmer<WholeBodyTrajectoryToolboxMessage>()
+      return new PacketTrimmer<WholeBodyTrajectoryToolboxMessage>()
       {
          @Override
          public WholeBodyTrajectoryToolboxMessage trim(WholeBodyTrajectoryToolboxMessage messageToTrim)
@@ -758,10 +785,10 @@ public final class MessageTrimmingTools
       };
    }
 
-   public static MessageTrimmer<WholeBodyTrajectoryToolboxOutputStatus> createWholeBodyTrajectoryToolboxOutputStatusTrimmer()
+   public static PacketTrimmer<WholeBodyTrajectoryToolboxOutputStatus> createWholeBodyTrajectoryToolboxOutputStatusTrimmer()
    {
 
-      return new MessageTrimmer<WholeBodyTrajectoryToolboxOutputStatus>()
+      return new PacketTrimmer<WholeBodyTrajectoryToolboxOutputStatus>()
       {
          @Override
          public WholeBodyTrajectoryToolboxOutputStatus trim(WholeBodyTrajectoryToolboxOutputStatus messageToTrim)
@@ -775,7 +802,7 @@ public final class MessageTrimmingTools
       };
    }
 
-   private static <T> TempPreallocatedList<T> trimList(TempPreallocatedList<T> listToTrim, MessageTrimmer<T> elementTrimmer, Class<T> elementClass)
+   private static <T> TempPreallocatedList<T> trimList(TempPreallocatedList<T> listToTrim, PacketTrimmer<T> elementTrimmer, Class<T> elementClass)
    {
       ListAllocator<T> allocator = new ListAllocator<T>()
       {

@@ -10,7 +10,8 @@ import java.util.TreeSet;
 import org.junit.Test;
 
 import us.ihmc.commons.PrintTools;
-import us.ihmc.humanoidRobotics.communication.util.MessageTrimmingTools.MessageTrimmer;
+import us.ihmc.communication.net.NetClassList;
+import us.ihmc.communication.net.NetClassList.PacketTrimmer;
 import us.ihmc.humanoidRobotics.kryo.IHMCCommunicationKryoNetClassList;
 import us.ihmc.idl.TempPreallocatedList;
 
@@ -54,7 +55,7 @@ public class MessageTrimmingToolsTest
       try
       {
          Method method = MessageTrimmingTools.class.getDeclaredMethod(methodName);
-         if (method.getReturnType() == MessageTrimmer.class)
+         if (method.getReturnType() == NetClassList.PacketTrimmer.class)
             return true;
       }
       catch (NoSuchMethodException | SecurityException e)
