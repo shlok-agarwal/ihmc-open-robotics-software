@@ -15,7 +15,7 @@ import us.ihmc.simulationconstructionset.Robot;
 import us.ihmc.simulationconstructionset.simulatedSensors.GroundContactPointBasedWrenchCalculator;
 import us.ihmc.yoVariables.registry.YoVariableRegistry;
 
-public class FallingBoxRobotController implements RobotController
+public class FallingBoxRobotGCPBasedEstimator implements RobotController
 {
    private static ReferenceFrame worldFrame = ReferenceFrame.getWorldFrame();
 
@@ -25,15 +25,15 @@ public class FallingBoxRobotController implements RobotController
 
    private final double dt;
 
-   private final GroundContactPointBasedWrenchCalculator gcpWrenchCalculator;
+   private final GroundContactPointBasedWrenchCalculator wrenchCalculator;
 
-   private final YoWrench gcpWrench;
+   private final YoWrench wrench;
 
    //   private final SimpleCollisionShapeBasedWrenchCalculator csWrenchCalculator;
    //
    //   private final YoWrench cspWrench;
 
-   public FallingBoxRobotController(Robot robot, double dt)
+   public FallingBoxRobotGCPBasedEstimator(Robot robot, double dt)
    {
       registry = new YoVariableRegistry(robot.getName() + "_registry");
 
@@ -43,11 +43,9 @@ public class FallingBoxRobotController implements RobotController
       Joint joint = robot.getJoint("bodyJoint");
       ArrayList<GroundContactPoint> groundContactPoints = new ArrayList<>();
       joint.recursiveGetAllGroundContactPoints(groundContactPoints);
-      gcpWrenchCalculator = new GroundContactPointBasedWrenchCalculator(robot.getName() + "_ft", groundContactPoints, joint, new RigidBodyTransform(),
-                                                                        registry);
+      wrenchCalculator = new GroundContactPointBasedWrenchCalculator(robot.getName() + "_ft", groundContactPoints, joint, new RigidBodyTransform(), registry);
 
-      gcpWrench = new YoWrench(robot.getName() + "_baseWrench", worldFrame, worldFrame, registry);
-
+      wrench = new YoWrench(robot.getName() + "_wrench", worldFrame, worldFrame, registry);
    }
 
    @Override
@@ -77,12 +75,12 @@ public class FallingBoxRobotController implements RobotController
    @Override
    public void doControl()
    {
-      gcpWrenchCalculator.calculate();
+      wrenchCalculator.calculate();
 
-      DenseMatrix64F wrenchMatrix = gcpWrenchCalculator.getWrench();
+      DenseMatrix64F wrenchMatrix = wrenchCalculator.getWrench();
       Wrench wrench = new Wrench(worldFrame, worldFrame, wrenchMatrix);
 
-      gcpWrench.set(wrench);
+      wrench.set(wrench);
    }
 
 }

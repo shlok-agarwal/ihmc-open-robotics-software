@@ -49,8 +49,8 @@ public class FallingBoxSimulation
       floatingJointOne.setQuaternion(initialOrientation);
       GroundContactModel groundModel = new LinearGroundContactModel(robotWithGCP, 1422, 150.6, 50.0, 1000.0, robotWithGCP.getRobotsYoVariableRegistry());
       robotWithGCP.setGroundContactModel(groundModel);
-      FallingBoxRobotController robotWithGCPController = new FallingBoxRobotController(robotWithGCP, dt);
-      robotWithGCP.setController(robotWithGCPController);
+      FallingBoxRobotGCPBasedEstimator gcpBasedEstimator = new FallingBoxRobotGCPBasedEstimator(robotWithGCP, dt);
+      robotWithGCP.setController(gcpBasedEstimator);
 
       //robot with collision shape.
       FallingBoxRobotDescription descriptionWithCS = new FallingBoxRobotDescription("robotWithCS", rootBox, bodyBox, mass, false);
@@ -60,8 +60,8 @@ public class FallingBoxSimulation
       FloatingJoint floatingJointTwo = (FloatingJoint) robotWithCS.getRootJoints().get(0);
       floatingJointTwo.setPosition(initialPositionTwo);
       floatingJointTwo.setQuaternion(initialOrientation);
-      FallingBoxRobotController robotWithCSController = new FallingBoxRobotController(robotWithCS, dt);
-      //robotWithCS.setController(robotWithCSController);
+      FallingBoxRobotCSBasedEstimator csBasedEstimator = new FallingBoxRobotCSBasedEstimator(robotWithCS, dt);
+      robotWithCS.setController(csBasedEstimator);
 
       List<Robot> allSimulatedRobotList = new ArrayList<Robot>();
       allSimulatedRobotList.add(robotWithGCP);
