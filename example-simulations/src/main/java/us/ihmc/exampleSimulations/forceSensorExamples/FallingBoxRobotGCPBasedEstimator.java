@@ -80,7 +80,7 @@ public class FallingBoxRobotGCPBasedEstimator implements RobotController
       DenseMatrix64F wrenchMatrix = wrenchCalculator.getWrench();
       Wrench wrench = new Wrench(worldFrame, worldFrame, wrenchMatrix);
 
-      wrench.set(wrench);
+      this.wrench.set(wrench);
    }
 
 }
