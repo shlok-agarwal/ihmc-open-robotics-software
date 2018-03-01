@@ -8,6 +8,7 @@ import us.ihmc.graphicsDescription.appearance.YoAppearance;
 import us.ihmc.robotics.robotDescription.FloatingJointDescription;
 import us.ihmc.robotics.robotDescription.ForceSensorDescription;
 import us.ihmc.robotics.robotDescription.GroundContactPointDescription;
+import us.ihmc.robotics.robotDescription.JointDescription;
 import us.ihmc.robotics.robotDescription.LinkDescription;
 import us.ihmc.robotics.robotDescription.LinkGraphicsDescription;
 import us.ihmc.robotics.robotDescription.PinJointDescription;
@@ -25,6 +26,10 @@ public class FallingBoxRobotDescription extends RobotDescription
       this.rootBox = rootBox;
       this.bodyBox = bodyBox;
 
+      double bodyBoxHeight = bodyBox.getHeight();
+      double bodyBoxLength = bodyBox.getLength();
+      double bodyBoxWidth = bodyBox.getWidth();
+
       FloatingJointDescription rootJoint = new FloatingJointDescription("rootJoint", "bodyjointvariablename");
 
       LinkDescription rootLink = new LinkDescription("rootLink");
@@ -37,19 +42,20 @@ public class FallingBoxRobotDescription extends RobotDescription
       rootLink.setLinkGraphics(rootLinkGraphics);
 
       rootJoint.setLink(rootLink);
-      
+
       addRootJoint(rootJoint);
 
       PinJointDescription bodyJoint = new PinJointDescription("bodyJoint", new Vector3D(0.0, 0.0, -0.5 * rootBox.getHeight()), Axis.Z);
 
       LinkDescription bodyLink = new LinkDescription("bodyLink");
-      bodyLink.setCenterOfMassOffset(new Vector3D(0.0, 0.0, -0.5 * bodyBox.getHeight()));
-      bodyLink.setMassAndRadiiOfGyration(mass, bodyBox.getLength(), bodyBox.getWidth(), bodyBox.getHeight());
+      bodyLink.setCenterOfMassOffset(new Vector3D(0.0, 0.0, -0.5 * bodyBoxHeight));
+      bodyLink.setMassAndRadiiOfGyration(mass, bodyBoxLength, bodyBoxWidth, bodyBoxHeight);
 
       LinkGraphicsDescription bodyLinkGraphics = new LinkGraphicsDescription();
-      bodyLinkGraphics.translate(0.0, 0.0, -bodyBox.getHeight());
-      bodyLinkGraphics.addCube(bodyBox.getLength(), bodyBox.getWidth(), bodyBox.getHeight(), YoAppearance.Red());
+      bodyLinkGraphics.translate(0.0, 0.0, -bodyBoxHeight);
+      bodyLinkGraphics.addCube(bodyBoxLength, bodyBoxWidth, bodyBoxHeight, YoAppearance.Red());
       bodyLinkGraphics.identity();
+
       bodyLink.setLinkGraphics(bodyLinkGraphics);
 
       bodyJoint.setLink(bodyLink);
@@ -57,53 +63,46 @@ public class FallingBoxRobotDescription extends RobotDescription
       if (useGroundContactPoints)
       {
          int idOfGCP = 0;
-         GroundContactPointDescription gcpDescription1 = new GroundContactPointDescription(name + "_gc"
-               + idOfGCP, new Vector3D(0.5 * bodyBox.getLength(), 0.5 * bodyBox.getWidth(), 0.5 * bodyBox.getHeight() - 0.5 * bodyBox.getHeight()));
-         bodyJoint.addGroundContactPoint(gcpDescription1);
+         addGroundContactPoint(bodyJoint, name + "_gc" + idOfGCP, 0.5 * bodyBoxLength, 0.5 * bodyBoxWidth, 0.5 * bodyBoxHeight - 0.5 * bodyBoxHeight);
          idOfGCP++;
 
-         GroundContactPointDescription gcpDescription2 = new GroundContactPointDescription(name + "_gc"
-               + idOfGCP, new Vector3D(0.5 * bodyBox.getLength(), 0.5 * bodyBox.getWidth(), -0.5 * bodyBox.getHeight() - 0.5 * bodyBox.getHeight()));
-         bodyJoint.addGroundContactPoint(gcpDescription2);
+         addGroundContactPoint(bodyJoint, name + "_gc" + idOfGCP, 0.5 * bodyBoxLength, -0.5 * bodyBoxWidth, 0.5 * bodyBoxHeight - 0.5 * bodyBoxHeight);
          idOfGCP++;
 
-         GroundContactPointDescription gcpDescription3 = new GroundContactPointDescription(name + "_gc"
-               + idOfGCP, new Vector3D(0.5 * bodyBox.getLength(), -0.5 * bodyBox.getWidth(), 0.5 * bodyBox.getHeight() - 0.5 * bodyBox.getHeight()));
-         bodyJoint.addGroundContactPoint(gcpDescription3);
+         addGroundContactPoint(bodyJoint, name + "_gc" + idOfGCP, 0.5 * bodyBoxLength, 0.5 * bodyBoxWidth, -0.5 * bodyBoxHeight - 0.5 * bodyBoxHeight);
          idOfGCP++;
 
-         GroundContactPointDescription gcpDescription4 = new GroundContactPointDescription(name + "_gc"
-               + idOfGCP, new Vector3D(0.5 * bodyBox.getLength(), -0.5 * bodyBox.getWidth(), -0.5 * bodyBox.getHeight() - 0.5 * bodyBox.getHeight()));
-         bodyJoint.addGroundContactPoint(gcpDescription4);
+         addGroundContactPoint(bodyJoint, name + "_gc" + idOfGCP, 0.5 * bodyBoxLength, -0.5 * bodyBoxWidth, -0.5 * bodyBoxHeight - 0.5 * bodyBoxHeight);
          idOfGCP++;
 
-         GroundContactPointDescription gcpDescription5 = new GroundContactPointDescription(name + "_gc"
-               + idOfGCP, new Vector3D(-0.5 * bodyBox.getLength(), 0.5 * bodyBox.getWidth(), 0.5 * bodyBox.getHeight() - 0.5 * bodyBox.getHeight()));
-         bodyJoint.addGroundContactPoint(gcpDescription5);
+         addGroundContactPoint(bodyJoint, name + "_gc" + idOfGCP, -0.5 * bodyBoxLength, 0.5 * bodyBoxWidth, 0.5 * bodyBoxHeight - 0.5 * bodyBoxHeight);
          idOfGCP++;
 
-         GroundContactPointDescription gcpDescription6 = new GroundContactPointDescription(name + "_gc"
-               + idOfGCP, new Vector3D(-0.5 * bodyBox.getLength(), 0.5 * bodyBox.getWidth(), -0.5 * bodyBox.getHeight() - 0.5 * bodyBox.getHeight()));
-         bodyJoint.addGroundContactPoint(gcpDescription6);
+         addGroundContactPoint(bodyJoint, name + "_gc" + idOfGCP, -0.5 * bodyBoxLength, -0.5 * bodyBoxWidth, 0.5 * bodyBoxHeight - 0.5 * bodyBoxHeight);
          idOfGCP++;
 
-         GroundContactPointDescription gcpDescription7 = new GroundContactPointDescription(name + "_gc"
-               + idOfGCP, new Vector3D(-0.5 * bodyBox.getLength(), -0.5 * bodyBox.getWidth(), 0.5 * bodyBox.getHeight() - 0.5 * bodyBox.getHeight()));
-         bodyJoint.addGroundContactPoint(gcpDescription7);
+         addGroundContactPoint(bodyJoint, name + "_gc" + idOfGCP, -0.5 * bodyBoxLength, 0.5 * bodyBoxWidth, -0.5 * bodyBoxHeight - 0.5 * bodyBoxHeight);
          idOfGCP++;
 
-         GroundContactPointDescription gcpDescription8 = new GroundContactPointDescription(name + "_gc"
-               + idOfGCP, new Vector3D(-0.5 * bodyBox.getLength(), -0.5 * bodyBox.getWidth(), -0.5 * bodyBox.getHeight() - 0.5 * bodyBox.getHeight()));
-         bodyJoint.addGroundContactPoint(gcpDescription8);
-         idOfGCP++;
+         addGroundContactPoint(bodyJoint, name + "_gc" + idOfGCP, -0.5 * bodyBoxLength, -0.5 * bodyBoxWidth, -0.5 * bodyBoxHeight - 0.5 * bodyBoxHeight);
       }
 
       RigidBodyTransform sensorLocation = new RigidBodyTransform();
       ForceSensorDescription ftSensor = new ForceSensorDescription(name + "_ft", sensorLocation);
       ftSensor.setUseGroundContactPoints(useGroundContactPoints);
       bodyJoint.addForceSensor(ftSensor);
-      
+
       rootJoint.addJoint(bodyJoint);
+   }
+
+   private void addGroundContactPoint(JointDescription joint, String name, double x, double y, double z)
+   {
+      GroundContactPointDescription gcpDescription = new GroundContactPointDescription(name, new Vector3D(x, y, z));
+      joint.addGroundContactPoint(gcpDescription);
+
+      joint.getLink().getLinkGraphics().identity();
+      joint.getLink().getLinkGraphics().translate(x, y, z);
+      joint.getLink().getLinkGraphics().addSphere(0.01);
    }
 
    public Box3D getBodyBox()

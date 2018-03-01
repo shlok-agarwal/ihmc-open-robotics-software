@@ -24,13 +24,13 @@ public class FallingBoxSimulation
 {
    static double dt = 0.001;
 
-   static double mass = 30.0;
+   static double mass = 99.0;
    static double heightOfTwoRobots = 1.0;
    static double gapOfTwoRobots = 1.0;
 
    static Point3D initialPositionOne = new Point3D(0.0, -0.5 * gapOfTwoRobots, heightOfTwoRobots);
    static Point3D initialPositionTwo = new Point3D(0.0, 0.5 * gapOfTwoRobots, heightOfTwoRobots);
-   static Vector3D initialOrientationAxisAngle = new Vector3D(0.0, Math.PI * 0.1, 0.0);
+   static Vector3D initialOrientationAxisAngle = new Vector3D(0.0, Math.PI * 0.0, 0.0);
    static Quaternion initialOrientation = new Quaternion(initialOrientationAxisAngle);
 
    static Box3D rootBox = new Box3D(0.05, 0.05, 0.1);
@@ -61,7 +61,7 @@ public class FallingBoxSimulation
       floatingJointTwo.setPosition(initialPositionTwo);
       floatingJointTwo.setQuaternion(initialOrientation);
       FallingBoxRobotController robotWithCSController = new FallingBoxRobotController(robotWithCS, dt);
-      robotWithCS.setController(robotWithCSController);
+      //robotWithCS.setController(robotWithCSController);
 
       List<Robot> allSimulatedRobotList = new ArrayList<Robot>();
       allSimulatedRobotList.add(robotWithGCP);
