@@ -10,11 +10,11 @@ import us.ihmc.euclid.tuple3D.interfaces.Vector3DReadOnly;
 import us.ihmc.euclid.tuple4D.Quaternion;
 import us.ihmc.euclid.tuple4D.interfaces.QuaternionBasics;
 import us.ihmc.jMonkeyEngineToolkit.camera.CameraMountInterface;
-import us.ihmc.yoVariables.variable.YoDouble;
 import us.ihmc.robotics.kinematics.CommonJoint;
 import us.ihmc.simulationconstructionset.physics.engine.featherstone.JointPhysics;
 import us.ihmc.simulationconstructionset.simulatedSensors.LidarMount;
 import us.ihmc.simulationconstructionset.simulatedSensors.WrenchCalculatorInterface;
+import us.ihmc.yoVariables.variable.YoDouble;
 
 /**
  * Motion constraint between {@link Link Links} and physics simulation.<p>
@@ -42,7 +42,7 @@ public abstract class Joint implements CommonJoint, java.io.Serializable
 
    public Joint parentJoint;
 
-   public final Vector3D offset = new Vector3D();    // Offset from the previous joint
+   public final Vector3D offset = new Vector3D(); // Offset from the previous joint
 
    public Link link;
    protected String name;
@@ -126,7 +126,6 @@ public abstract class Joint implements CommonJoint, java.io.Serializable
       }
    }
 
-
    /**
     * Retrieves the joint name.
     *
@@ -137,14 +136,14 @@ public abstract class Joint implements CommonJoint, java.io.Serializable
       return this.name;
    }
 
-// /**
-//  * Returns a VarList containing the YoVariables related to this joint.
-//  * Each implementation of Joint has a different set of variables and therefore a
-//  * different version of this method.
-//  *
-//  * @return VarList containing the variables belonging to this joint.
-//  */
-// protected abstract VarList getJointVars();
+   // /**
+   //  * Returns a VarList containing the YoVariables related to this joint.
+   //  * Each implementation of Joint has a different set of variables and therefore a
+   //  * different version of this method.
+   //  *
+   //  * @return VarList containing the variables belonging to this joint.
+   //  */
+   // protected abstract VarList getJointVars();
 
    /**
     * Retrieves all camera mounts at this joint.  A camera can be mounted to any of these
@@ -167,7 +166,6 @@ public abstract class Joint implements CommonJoint, java.io.Serializable
    {
       return this.imuMounts;
    }
-
 
    /**
     * Changes the offset between the current joint and its parent joint.
@@ -192,7 +190,7 @@ public abstract class Joint implements CommonJoint, java.io.Serializable
       this.offset.set(x, y, z);
       this.offsetTransform3D.setTranslation(this.offset);
 
-//    this.jointGraphics3D.changeOffsetVector(offsetTransform3D);
+      //    this.jointGraphics3D.changeOffsetVector(offsetTransform3D);
    }
 
    private boolean isDynamic = true;
@@ -234,7 +232,7 @@ public abstract class Joint implements CommonJoint, java.io.Serializable
 
    public void addGroundContactPoint(int groupIdentifier, GroundContactPoint point)
    {
-      physics.addGroundContactPoint(groupIdentifier,point);
+      physics.addGroundContactPoint(groupIdentifier, point);
    }
 
    public void addJointWrenchSensor(JointWrenchSensor jointWrenchSensor)
@@ -296,37 +294,31 @@ public abstract class Joint implements CommonJoint, java.io.Serializable
 
       retBuffer.append("   link: " + link);
 
-      if( physics != null )
+      if (physics != null)
          retBuffer.append(physics);
 
       /*
-       * retBuffer.append("u_i: " + u_i + "\n");
-       * retBuffer.append("d_i: " + d_i + "\n");
-       * retBuffer.append("w_i: " + w_i + "\n");
-       * retBuffer.append("r_in: " + r_in + "\n");
-       *
-       * retBuffer.append("s_hat_i: " + s_hat_i + "\n");
-       * retBuffer.append("Z_hat_i: " + Z_hat_i + "\n");
-       * retBuffer.append("Qi_etc: " + Qi_etc + "\n");
-       * retBuffer.append("Ri_h: " + Ri_h + "\n");
-       * retBuffer.append("Rh_i: " + Rh_i + "\n");
-       * retBuffer.append("r_i: " + r_i + "\n");
-       * retBuffer.append("r_h: " + r_h + "\n");
-       * retBuffer.append("I_hat_i: " + I_hat_i + "\n");
+       * retBuffer.append("u_i: " + u_i + "\n"); retBuffer.append("d_i: " + d_i
+       * + "\n"); retBuffer.append("w_i: " + w_i + "\n");
+       * retBuffer.append("r_in: " + r_in + "\n"); retBuffer.append("s_hat_i: "
+       * + s_hat_i + "\n"); retBuffer.append("Z_hat_i: " + Z_hat_i + "\n");
+       * retBuffer.append("Qi_etc: " + Qi_etc + "\n"); retBuffer.append("Ri_h: "
+       * + Ri_h + "\n"); retBuffer.append("Rh_i: " + Rh_i + "\n");
+       * retBuffer.append("r_i: " + r_i + "\n"); retBuffer.append("r_h: " + r_h
+       * + "\n"); retBuffer.append("I_hat_i: " + I_hat_i + "\n");
        * retBuffer.append("c_hat_i: " + c_hat_i + "\n");
-       * retBuffer.append("sIs: " + sIs + "\n");
-       *
-       * retBuffer.append("Qi_etc: " + Qi_etc + "\n");
+       * retBuffer.append("sIs: " + sIs + "\n"); retBuffer.append("Qi_etc: " +
+       * Qi_etc + "\n");
        */
 
       // retBuffer.append("qdd: " + qdd.val + "\n");
-//    retBuffer.append("\n");
-//
-//    for (int i = 0; i < childrenJoints.size(); i++)
-//    {
-//       Joint nextJoint = childrenJoints.get(i);
-//       retBuffer.append(nextJoint.toString());
-//    }
+      //    retBuffer.append("\n");
+      //
+      //    for (int i = 0; i < childrenJoints.size(); i++)
+      //    {
+      //       Joint nextJoint = childrenJoints.get(i);
+      //       retBuffer.append(nextJoint.toString());
+      //    }
 
       return retBuffer.toString();
    }
@@ -336,7 +328,6 @@ public abstract class Joint implements CommonJoint, java.io.Serializable
     * will only be updated if specified.
     */
    protected abstract void update();
-
 
    /**
     * Recurses through each joint updating the transform between the world and it.
@@ -384,7 +375,6 @@ public abstract class Joint implements CommonJoint, java.io.Serializable
 
    }
 
-
    protected void recursiveUpdateJointsIMUMountAccelerations()
    {
       this.updateIMUMountsAcceleration(this.transformToNext);
@@ -395,7 +385,6 @@ public abstract class Joint implements CommonJoint, java.io.Serializable
          childJoint.recursiveUpdateJointsIMUMountAccelerations();
       }
    }
-
 
    /**
     * Retrieves the Transform3D for this joint.  This transform is used in graphics
@@ -495,18 +484,16 @@ public abstract class Joint implements CommonJoint, java.io.Serializable
          }
 
          /*
-          *  // Update the velocities of the points not in contact, just in case the user is using them
-          * // Those in contact will be updated by featherstonePassOne.
-          * // Now update the points attached to the joint:
-          * R0_i.set(Ri_0);
-          * R0_i.transpose();
-          *
-          * ArrayList groundContactPointsNotInContact = groundContactPointGroup.getGroundContactPointsNotInContact();
-          * for (int i = 0; i < groundContactPointsNotInContact.size(); i++)
-          * {
-          *  GroundContactPoint point = (GroundContactPoint) groundContactPointsNotInContact.get(i);
-          *  point.updatePointVelocity(R0_i, this.link.comOffset, v_i, w_i);
-          * }
+          * // Update the velocities of the points not in contact, just in case
+          * the user is using them // Those in contact will be updated by
+          * featherstonePassOne. // Now update the points attached to the joint:
+          * R0_i.set(Ri_0); R0_i.transpose(); ArrayList
+          * groundContactPointsNotInContact =
+          * groundContactPointGroup.getGroundContactPointsNotInContact(); for
+          * (int i = 0; i < groundContactPointsNotInContact.size(); i++) {
+          * GroundContactPoint point = (GroundContactPoint)
+          * groundContactPointsNotInContact.get(i);
+          * point.updatePointVelocity(R0_i, this.link.comOffset, v_i, w_i); }
           */
       }
 
@@ -529,11 +516,10 @@ public abstract class Joint implements CommonJoint, java.io.Serializable
     */
    public void addJoint(Joint childJoint)
    {
-      childJoint.parentJoint = this;    // Set his parent to me for later back tracking...
+      childJoint.parentJoint = this; // Set his parent to me for later back tracking...
 
       childrenJoints.add(childJoint);
    }
-
 
    /**
     * Retrieves the transform describing the translation between the current joint and the
@@ -591,7 +577,7 @@ public abstract class Joint implements CommonJoint, java.io.Serializable
     */
    public void addForceSensor(WrenchCalculatorInterface forceSensor)
    {
-      if(forceSensors == null)
+      if (forceSensors == null)
          forceSensors = new ArrayList<WrenchCalculatorInterface>();
 
       forceSensors.add(forceSensor);
@@ -611,7 +597,6 @@ public abstract class Joint implements CommonJoint, java.io.Serializable
 
    // protected void setName(String n){this.name=n;}
    // protected String getName(){return this.name;}
-
 
    /**
     * Retrieves the number of degrees of freedom held by this joint.  Each degree
@@ -645,8 +630,6 @@ public abstract class Joint implements CommonJoint, java.io.Serializable
    {
       offsetToPack.set(offset);
    }
-
-
 
    /**
     * Sets the link for this joint.  If a previous link existed it is replaced, removing all graphics.
@@ -730,8 +713,6 @@ public abstract class Joint implements CommonJoint, java.io.Serializable
          child.recursiveGetSensors(simulatedSensorsToPack);
       }
    }
-
-
 
    private void getSensors(ArrayList<SimulatedSensor> simulatedSensorsToPack)
    {
@@ -858,12 +839,14 @@ public abstract class Joint implements CommonJoint, java.io.Serializable
 
    public Link getLink(String linkName)
    {
-      if (this.link.getName().equals(linkName)) return this.link;
+      if (this.link.getName().equals(linkName))
+         return this.link;
 
       for (Joint childJoint : childrenJoints)
       {
          Link link = childJoint.getLink(linkName);
-         if (link != null) return link;
+         if (link != null)
+            return link;
       }
 
       return null;
@@ -872,11 +855,11 @@ public abstract class Joint implements CommonJoint, java.io.Serializable
    public void removeChildJoint(Joint jointToRemove)
    {
       boolean removed = childrenJoints.remove(jointToRemove);
-      if (!removed) throw new RuntimeException("Could not remove joint. Joint " + jointToRemove.getName() + " was not a child of joint " + this.getName());
+      if (!removed)
+         throw new RuntimeException("Could not remove joint. Joint " + jointToRemove.getName() + " was not a child of joint " + this.getName());
 
       jointToRemove.parentJoint = null;
    }
-
 
    public Robot getRobot()
    {
@@ -911,14 +894,14 @@ public abstract class Joint implements CommonJoint, java.io.Serializable
    public ExternalForcePoint recursiveGetExternalForcePoint(String name)
    {
       ExternalForcePoint externalForcePoint = physics.getExternalForcePoint(name);
-      if (externalForcePoint != null) 
+      if (externalForcePoint != null)
          return externalForcePoint;
 
       for (int i = 0; i < childrenJoints.size(); i++)
       {
          Joint child = childrenJoints.get(i);
          externalForcePoint = child.recursiveGetExternalForcePoint(name);
-         if (externalForcePoint != null) 
+         if (externalForcePoint != null)
             return externalForcePoint;
       }
 
@@ -927,17 +910,33 @@ public abstract class Joint implements CommonJoint, java.io.Serializable
 
    public Joint recursivelyGetJoint(String name)
    {
-      if (this.getName().equals(name)) return this;
+      if (this.getName().equals(name))
+         return this;
 
       for (int i = 0; i < childrenJoints.size(); i++)
       {
          Joint child = childrenJoints.get(i);
          Joint jointToReturn = child.recursivelyGetJoint(name);
-         if (jointToReturn != null) 
+         if (jointToReturn != null)
             return jointToReturn;
       }
 
       return null;
+   }
+
+   public void recursivelyGetContactingExternalForcePoints(ArrayList<ContactingExternalForcePoint> ret)
+   {
+      if (childrenJoints.size() == 0)
+      {
+         ret.addAll(getLink().getContactingExternalForcePoints());
+      }
+      else
+      {
+         for (int i = 0; i < childrenJoints.size(); i++)
+         {
+            childrenJoints.get(i).recursivelyGetContactingExternalForcePoints(ret);
+         }
+      }
    }
 
 }

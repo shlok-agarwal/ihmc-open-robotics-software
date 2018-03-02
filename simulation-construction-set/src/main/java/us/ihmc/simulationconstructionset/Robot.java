@@ -14,13 +14,6 @@ import us.ihmc.graphicsDescription.Graphics3DObject;
 import us.ihmc.graphicsDescription.yoGraphics.YoGraphicsListRegistry;
 import us.ihmc.jMonkeyEngineToolkit.camera.CameraMountInterface;
 import us.ihmc.jMonkeyEngineToolkit.camera.CameraMountList;
-import us.ihmc.yoVariables.dataBuffer.YoVariableHolder;
-import us.ihmc.yoVariables.listener.RewoundListener;
-import us.ihmc.yoVariables.registry.NameSpace;
-import us.ihmc.yoVariables.registry.YoVariableRegistry;
-import us.ihmc.yoVariables.variable.YoDouble;
-import us.ihmc.yoVariables.variable.YoVariable;
-import us.ihmc.yoVariables.variable.YoVariableList;
 import us.ihmc.robotics.robotController.RobotController;
 import us.ihmc.simulationconstructionset.robotdefinition.ExternalForcePointDefinitionFixedFrame;
 import us.ihmc.simulationconstructionset.robotdefinition.GroundContactDefinitionFixedFrame;
@@ -29,6 +22,13 @@ import us.ihmc.simulationconstructionset.robotdefinition.JointDefinitionFixedFra
 import us.ihmc.simulationconstructionset.robotdefinition.RobotDefinitionFixedFrame;
 import us.ihmc.simulationconstructionset.simulatedSensors.LidarMount;
 import us.ihmc.simulationconstructionset.simulatedSensors.WrenchCalculatorInterface;
+import us.ihmc.yoVariables.dataBuffer.YoVariableHolder;
+import us.ihmc.yoVariables.listener.RewoundListener;
+import us.ihmc.yoVariables.registry.NameSpace;
+import us.ihmc.yoVariables.registry.YoVariableRegistry;
+import us.ihmc.yoVariables.variable.YoDouble;
+import us.ihmc.yoVariables.variable.YoVariable;
+import us.ihmc.yoVariables.variable.YoVariableList;
 
 /**
  * <p>Title: Robot</p>
@@ -58,7 +58,7 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
    public YoDouble gravityY;
    public YoDouble gravityZ;
 
-// protected double gX = 0.0, gY = 0.0, gZ = -9.81;
+   // protected double gX = 0.0, gY = 0.0, gZ = -9.81;
 
    private ArrayList<RobotControllerAndParameters> controllers = new ArrayList<RobotControllerAndParameters>();
 
@@ -67,11 +67,11 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
    private ExternalForcePoint kp_body;
 
    private DynamicIntegrationMethod dynamicIntegrationMethod = DynamicIntegrationMethod.RUNGE_KUTTA_FOURTH_ORDER;
-   
+
    private final ArrayList<Graphics3DObject> staticLinkGraphics = new ArrayList<Graphics3DObject>();
    // private VarList robVars;
-// private VarList groundVars;
-// private ArrayList<VarList> controllerVarLists = new ArrayList<VarList>();
+   // private VarList groundVars;
+   // private ArrayList<VarList> controllerVarLists = new ArrayList<VarList>();
 
    public Robot(RobotDefinitionFixedFrame definition, String name)
    {
@@ -112,14 +112,14 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
       for (GroundContactDefinitionFixedFrame groundContactDefinitionFixedFrame : jointDefinition.getGroundContactDefinitionsFixedFrame())
       {
          GroundContactPoint groundContactPoint = new GroundContactPoint(groundContactDefinitionFixedFrame.getName(),
-                                                    groundContactDefinitionFixedFrame.getOffset(), this.getRobotsYoVariableRegistry());
+                                                                        groundContactDefinitionFixedFrame.getOffset(), this.getRobotsYoVariableRegistry());
          currentJoint.addGroundContactPoint(groundContactPoint);
       }
 
       for (ExternalForcePointDefinitionFixedFrame externalForcePointDefinitionFixedFrame : jointDefinition.getExternalForcePointDefinitionsFixedFrame())
       {
          ExternalForcePoint externalForcePoint = new ExternalForcePoint(externalForcePointDefinitionFixedFrame.getName(),
-                                                    externalForcePointDefinitionFixedFrame.getOffset(), this.getRobotsYoVariableRegistry());
+                                                                        externalForcePointDefinitionFixedFrame.getOffset(), this.getRobotsYoVariableRegistry());
          currentJoint.addExternalForcePoint(externalForcePoint);
       }
 
@@ -160,7 +160,7 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
    {
       this.dynamicIntegrationMethod = dynamicIntegrationMethod;
    }
-   
+
    private void setDefaultGravityToEarthWithMetricUnits()
    {
       gravityZ.set(-9.81);
@@ -259,7 +259,6 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
       yoGraphicsListRegistries.add(yoGraphicsListRegistry);
    }
 
-
    /**
     * Adds a root Joint to this robot.  This joint may have multiple child joints which also can have children.  A robot
     * may have any number of root joints.
@@ -270,7 +269,6 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
    {
       this.rootJoints.add(root);
    }
-
 
    /**
     * Retrieves this robot's ground contact model.
@@ -297,7 +295,6 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
       }
    }
 
-
    /**
     * Retrieves an ArrayList containing the rootJoints of this robot.  These joints make up the entirety of the robot's visual component as all joints and links are at some level their children.
     *
@@ -307,12 +304,11 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
    {
       return rootJoints;
    }
-   
+
    public void getRootJoints(ArrayList<Joint> jointsToPack)
    {
       jointsToPack.addAll(rootJoints);
    }
-
 
    /**
     * Sets gravity to the specified values. For example, if using
@@ -329,14 +325,14 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
       this.gravityY.set(gravityY);
       this.gravityZ.set(gravityZ);
    }
-   
+
    public void setGravity(Vector3D gravity)
    {
       this.gravityX.set(gravity.getX());
       this.gravityY.set(gravity.getY());
       this.gravityZ.set(gravity.getZ());
    }
-   
+
    /**
     * Sets the Z component of the gravity to the specified value. For example, if using
     * meter-kilogram-seconds units of measure with Earth's gravity, then use
@@ -393,16 +389,16 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
    {
       setController(new RobotControllerAndParameters(controller, simulationTicksPerControlTick));
    }
-   
+
    public void setController(ArrayList<RobotController> controllers, int simulationTicksPerControlTick)
    {
-      for(int i = 0; i<controllers.size(); i++)
+      for (int i = 0; i < controllers.size(); i++)
       {
          RobotController controller = controllers.get(i);
-         setController(controller,simulationTicksPerControlTick);
+         setController(controller, simulationTicksPerControlTick);
       }
    }
-   
+
    public void setControllersAndCallInitialization(ArrayList<RobotControllerAndParameters> robotControllersAndParameters)
    {
       for (RobotControllerAndParameters robotControllerAndParameters : robotControllersAndParameters)
@@ -411,7 +407,7 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
          robotControllerAndParameters.getController().initialize();
       }
    }
-   
+
    public void setController(RobotControllerAndParameters controllerAndParameters)
    {
       YoVariableRegistry registry = controllerAndParameters.getController().getYoVariableRegistry();
@@ -429,7 +425,7 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
       if (controllers == null)
          return;
 
-//    for(RobotControllerAndParameters controller : controllers)
+      //    for(RobotControllerAndParameters controller : controllers)
       for (int i = 0; i < controllers.size(); i++)
       {
          RobotControllerAndParameters controller = controllers.get(i);
@@ -443,7 +439,6 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
          }
       }
    }
-
 
    // public RobotController getController(){return this.controller;}
 
@@ -466,9 +461,9 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
     * @return VarList associated with the GroundContactModel
     */
 
-// protected VarList getGroundContactVarList(){return this.groundVars;}
-// protected ArrayList<VarList> getControllerVarLists(){return this.controllerVarLists;}
-// protected VarList getExternalForceVarList(){return this.groundVars;}
+   // protected VarList getGroundContactVarList(){return this.groundVars;}
+   // protected ArrayList<VarList> getControllerVarLists(){return this.controllerVarLists;}
+   // protected VarList getExternalForceVarList(){return this.groundVars;}
 
    /**
     * Gets the name of this Robot.
@@ -501,7 +496,7 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
       boolean updatePoints = false;
       boolean updateCameraMounts = true;
       boolean updateIMUMounts = false;
-      
+
       update(updatePoints, updateCameraMounts, updateIMUMounts);
    }
 
@@ -517,7 +512,7 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
          rootJoint.recursiveUpdateJoints(null, updatePoints, updateCameraMounts, updateIMUMounts, t.getDoubleValue());
       }
    }
-   
+
    public void updateIMUMountAccelerations()
    {
       for (int i = 0; i < rootJoints.size(); i++)
@@ -569,21 +564,21 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
          cameraMountList.addCameraMounts(mountArrayList);
       }
    }
-   
+
    public ArrayList<SimulatedSensor> getSensors()
    {
       ArrayList<SimulatedSensor> ret = new ArrayList<SimulatedSensor>();
-      
+
       ArrayList<Joint> children = this.getRootJoints();
       for (int i = 0; i < children.size(); i++)
       {
          Joint rootJoint = children.get(i);
          rootJoint.recursiveGetSensors(ret);
       }
-      
+
       return ret;
    }
-   
+
    /**
     * Returns an ArrayList appropriate to the type of sensor being queried containing all the sensors of that type for each joint. 
     */
@@ -591,12 +586,12 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
    public <T extends SimulatedSensor> ArrayList<T> getSensors(Class<T> sensorType)
    {
       ArrayList<SimulatedSensor> allSensors = getSensors();
-      
+
       ArrayList<T> specificSensors = new ArrayList<T>();
-      
-      for(SimulatedSensor sensor : allSensors)
+
+      for (SimulatedSensor sensor : allSensors)
       {
-         if(sensorType.isAssignableFrom(sensor.getClass()))
+         if (sensorType.isAssignableFrom(sensor.getClass()))
          {
             specificSensors.add((T) sensor);
          }
@@ -604,8 +599,7 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
 
       return specificSensors;
    }
-   
-   
+
    public void getAllOneDegreeOfFreedomJoints(ArrayList<OneDegreeOfFreedomJoint> oneDegreeOfFreedomJoints)
    {
       ArrayList<Joint> children = this.getRootJoints();
@@ -614,7 +608,7 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
       {
          Joint rootJoint = children.get(i);
          rootJoint.recursiveGetOneDegreeOfFreedomJoints(oneDegreeOfFreedomJoints);
-      }    
+      }
    }
 
    public void getLidarMounts(ArrayList<LidarMount> lidarMountsToPack)
@@ -625,9 +619,9 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
       {
          Joint rootJoint = children.get(i);
          rootJoint.recursiveGetLidarMounts(lidarMountsToPack);
-      }    
+      }
    }
-   
+
    public void getIMUMounts(ArrayList<IMUMount> imuMountsToPack)
    {
       ArrayList<Joint> children = this.getRootJoints();
@@ -636,9 +630,9 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
       {
          Joint rootJoint = children.get(i);
          rootJoint.recursiveGetIMUMounts(imuMountsToPack);
-      }    
+      }
    }
-   
+
    public void getForceSensors(ArrayList<WrenchCalculatorInterface> forceSensors)
    {
       ArrayList<Joint> children = this.getRootJoints();
@@ -700,7 +694,7 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
 
       return ret;
    }
-   
+
    public ArrayList<ExternalForcePoint> getAllExternalForcePoints()
    {
       ArrayList<ExternalForcePoint> ret = new ArrayList<ExternalForcePoint>();
@@ -715,7 +709,7 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
 
       return ret;
    }
-   
+
    public ArrayList<KinematicPoint> getAllKinematicPoints()
    {
       ArrayList<KinematicPoint> ret = new ArrayList<KinematicPoint>();
@@ -739,11 +733,31 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
       {
          Joint rootJoint = children.get(i);
          ExternalForcePoint externalForcePoint = rootJoint.recursiveGetExternalForcePoint(name);
-         if (externalForcePoint != null) 
+         if (externalForcePoint != null)
             return externalForcePoint;
       }
 
       return null;
+   }
+
+   public ArrayList<ContactingExternalForcePoint> getAllContactingExternalForcePoints()
+   {
+      ArrayList<ContactingExternalForcePoint> ret = new ArrayList<ContactingExternalForcePoint>();
+
+      ArrayList<Joint> rootJoints = this.getRootJoints();
+
+      for (int i = 0; i < rootJoints.size(); i++)
+      {
+         Joint rootJoint = rootJoints.get(i);
+
+         for (int j = 0; j < rootJoint.childrenJoints.size(); j++)
+         {
+            rootJoint.childrenJoints.get(j).recursivelyGetContactingExternalForcePoints(ret);
+         }
+
+      }
+
+      return ret;
    }
 
    /**
@@ -762,12 +776,12 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
     * @param linkGraphics LinkGraphics to be added.
     */
    public void addStaticLinkGraphics(Graphics3DObject linkGraphics)
-   {      
-      
+   {
+
       staticLinkGraphics.add(linkGraphics);
-      
+
    }
-   
+
    public void addStaticLinkGraphics(ArrayList<Graphics3DObject> linkGraphicsArray)
    {
       for (Graphics3DObject linkGraphics : linkGraphicsArray)
@@ -775,7 +789,6 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
          addStaticLinkGraphics(linkGraphics);
       }
    }
-
 
    /**
     * Updates the velocities and positions at each joint as well as the rotation matrices from and to the base coordinate system.  Each joint stores
@@ -868,10 +881,10 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
    {
       return yoVariableRegistry;
    }
-   
+
    public void setRobotsYoVariableRegistry(YoVariableRegistry registry)
    {
-     this.yoVariableRegistry = registry;
+      this.yoVariableRegistry = registry;
    }
 
    /**
@@ -964,7 +977,6 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
    {
    }
 
-
    /**
     * Will update the qdd values of the joints, but not integrate the velocities or anything like that.
     * Good for testing inverse dynamics routines and things like that.
@@ -1020,7 +1032,7 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
       }
 
       double temp_time = t.getDoubleValue();
-      
+
       switch (dynamicIntegrationMethod)
       {
       case RUNGE_KUTTA_FOURTH_ORDER:
@@ -1052,14 +1064,14 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
 
          doDynamics(0);
          rootJointsRecursiveEulerIntegrate(DT / 2.0);
-         t.set(temp_time + DT/2.0);
+         t.set(temp_time + DT / 2.0);
 
          rootJointsRecursiveSaveTempState();
 
          doDynamics(1);
          rootJointsRecursiveEulerIntegrate(DT / 2.0);
          t.set(temp_time + DT);
-         
+
          break;
       }
 
@@ -1067,19 +1079,16 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
          throw new RuntimeException("Should not get here");
       }
 
-      
+      //    }
 
-//    }
-
-//    else
-//    {
-//       ArrayList<Joint> unreasonableAccelerationJoints = getUnreasonableAccelerationJoints();
-//       throw new UnreasonableAccelerationException(unreasonableAccelerationJoints);
-//
-//       // System.err.println("Unreasonable Accelerations!");
-//    }
+      //    else
+      //    {
+      //       ArrayList<Joint> unreasonableAccelerationJoints = getUnreasonableAccelerationJoints();
+      //       throw new UnreasonableAccelerationException(unreasonableAccelerationJoints);
+      //
+      //       // System.err.println("Unreasonable Accelerations!");
+      //    }
    }
-
 
    private void doDynamicsAndIntegrateWithFunction(double DT) throws UnreasonableAccelerationException
    {
@@ -1179,7 +1188,6 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
       return rotationalKineticEnergy;
    }
 
-
    /**
     * Computes the total rotational kinetic energy of the subtree rooted at
     * the specified root Joint. This is the sum over i of 1/2 w_i^T*J_i*w_i, where
@@ -1228,8 +1236,7 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
       return rootJoint.physics.recursiveComputeGravitationalPotentialEnergy();
    }
 
-
-   private Point3D tempCOMPoint = new Point3D();    // Temporary point storing the robot's center of mass
+   private Point3D tempCOMPoint = new Point3D(); // Temporary point storing the robot's center of mass
 
    /**
     * Computes the center of mass of this Robot.  This center of mass position is returned
@@ -1339,7 +1346,6 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
       return totalMass;
    }
 
-
    private Vector3D tempAngularMomentum = new Vector3D();
 
    /**
@@ -1375,7 +1381,6 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
       rootJoint.physics.recursiveComputeAngularMomentum(tempAngularMomentum);
       angularMomentum.add(tempAngularMomentum);
    }
-
 
    private Vector3D tempCOMVector = new Vector3D();
 
@@ -1437,7 +1442,6 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
       return mass;
    }
 
-
    private final Vector3D tempRVector = new Vector3D();
    private final Vector3D tempRCrossF = new Vector3D(), tempForce = new Vector3D();
 
@@ -1475,7 +1479,7 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
          copMoment.set(0.0, 0.0, 0.0);
          return;
       }
-        
+
       copPoint.scale(1.0 / copForce.getZ());
 
       for (int i = 0; i < gcPoints.size(); i++)
@@ -1505,26 +1509,26 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
       StringBuffer retBuffer = new StringBuffer();
 
       Queue<Joint> queue = new LinkedList<Joint>();
-      
+
       retBuffer.append("Robot: " + name + "\n\n");
 
       ArrayList<Joint> children = this.getRootJoints();
 
       queue.addAll(children);
-      
-      while(!queue.isEmpty())
-      {
-        Joint joint = queue.poll();
-            
-        retBuffer.append("\n"+joint.toString());
-        ArrayList<Joint> childrenJoints = joint.getChildrenJoints();
 
-        queue.addAll(childrenJoints);
+      while (!queue.isEmpty())
+      {
+         Joint joint = queue.poll();
+
+         retBuffer.append("\n" + joint.toString());
+         ArrayList<Joint> childrenJoints = joint.getChildrenJoints();
+
+         queue.addAll(childrenJoints);
       }
 
       return retBuffer.toString();
    }
-   
+
    public void printRobotJointsAndMasses(StringBuffer stringBuffer)
    {
       Queue<Joint> queue = new LinkedList<Joint>();
@@ -1532,7 +1536,7 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
 
       queue.addAll(children);
 
-      while(!queue.isEmpty())
+      while (!queue.isEmpty())
       {
          Joint joint = queue.poll();
 
@@ -1556,126 +1560,125 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
     * @param stream PrintStream to output the class to. Use System.out to output to the screen.
     */
 
-// public void createControllerBase(PrintStream stream)
-// {
-//   // Retrieve the class and package names
-//   String name = this.getClass().getSimpleName();  // Robot Class
-//   String baseName; // Name of ControllerBase
-//   // Lets remove any Robot endings from the ControllerBase name
-//   if (name.endsWith("Robot"))
-//     baseName = name.substring(0, name.length() - "Robot".length());
-//   else
-//     baseName = name;
-//
-//   String packageName = this.getClass().getPackage().getName(); // Robot Package
-//
-//   stream.println("package " + packageName + ";");
-//   stream.println("");
-//   stream.println("import us.ihmc.simulationconstructionset.*;");
-//   stream.println("import java.util.*;");
-//   stream.println("");
-//   stream.println("public class " + baseName + "ControllerBase implements YoVariableRegistry");
-//   stream.println("{");
-//   println(stream, 3, "protected " + name + " rob;");
-//   stream.println("");
-//   println(stream, 3, "// These are the variables that are automatically created when the robot is created:");
-//   //println(stream, 3, "YoVariable t;");
-//
-//   //VarList robVariables = new VarList("Robot Variables");
-//   // Print the joint variables:
-//   this.printVarBase(stream, robVars);
-//   stream.println("");
-//   this.printVarBase(stream, groundVars);
-//
-//   //for(int jointNum = 0; jointNum < rootJoints.size(); jointNum++)
-//   //{
-//    // Joint rootJoint = (Joint) rootJoints.get(jointNum);
-//    // recursivelyPrintJointBase(rootJoint, stream, robVariables);
-//   //}
-//
-//   stream.println("");
-//   println(stream, 3, "// User defined control variables will be placed in this ArrayList when they are registered:");
-//   println(stream, 3, "ArrayList controlVars = new ArrayList();");
-//   println(stream, 3, "LinkedHashMap controlVarsHashMap = new LinkedHashMap();");
-//   stream.println("");
-//   println(stream, 3, "public " + baseName + "ControllerBase(" + name + " rob)");
-//   println(stream, 3, "{");
-//   println(stream, 5, "this.rob = rob;");
-//   stream.println("");
-//   println(stream, 5, "// Get the variables that are stored with the robot:");
-//   stream.println("");
-//
-//   //println(stream, 5, "t = rob.getVar(\"t\");");
-//   stream.println("");
-//
-//   //
-//   for(int varNum=0; varNum<robVars.size(); varNum++)
-//   {
-//     YoVariable var = robVars.get(varNum);
-//
-//     if(varNum % 3 == 0) {stream.print("     ");}
-//     stream.print(var.getName() + " = rob.getVariable(\"" + var.getName() + "\"); ");
-//     if(varNum % 3 == 2) {stream.println("");}
-//   }
-//
-//   stream.println("");
-//   for(int varNum=0; varNum<groundVars.size(); varNum++)
-//   {
-//     YoVariable var = groundVars.get(varNum);
-//
-//     if(varNum % 3 == 0) {stream.print("     ");}
-//     stream.print(var.getName() + " = rob.getVariable(\"" + var.getName() + "\"); ");
-//     if(varNum % 3 == 2) {stream.println("");}
-//   }
-//
-//
-//   stream.println("");
-//   println(stream, 3, "}");
-//   stream.println("");
-//   println(stream, 3, "public void registerVariable(YoVariable var)");
-//   println(stream, 3, "{");
-//   println(stream, 5, "if (controlVarsHashMap.containsKey(var.getName())) System.err.println(\"Warning:  \" + var.getName() + \" has already been registered\");");
-//   println(stream, 5, "controlVarsHashMap.put(var.getName(), var);");
-//   println(stream, 5, "controlVars.add(var);");
-//   println(stream, 3, "}");
-//   stream.println("");
-//   println(stream, 3, "public YoVariable[] getControlVars()");
-//   println(stream, 3, "{");
-//   println(stream, 5, "YoVariable[] ret = new YoVariable[controlVars.size()];");
-//   println(stream, 5, "controlVars.toArray(ret);");
-//   println(stream, 5, "return ret;");
-//   println(stream, 3, "}");
-//
-//   stream.println("");
-//   println(stream, 3, "public YoVariable getVariable(String name)");
-//   println(stream, 3, "{");
-//   println(stream, 5, "YoVariable ret = null;");
-//   println(stream, 5, "ret = (YoVariable) controlVarsHashMap.get(name);");
-//   println(stream, 5, "if (ret != null) return ret;");
-//   stream.println("");
-//   println(stream, 5, "if (rob.hasVar(name)) return rob.getVariable(name);");
-//   stream.println("");
-//   println(stream, 5, "System.err.println(\"Variable \" + name + \" not found in " + name + "ControllerBase.getVariable()\");");
-//   println(stream, 5, "return null;");
-//   println(stream, 3, "}");
-//
-//
-//   stream.println("");
-//   println(stream, 3, "public boolean hasVar(String name)");
-//   println(stream, 3, "{");
-//   println(stream, 5, "YoVariable ret = null;");
-//   println(stream, 5, "ret = (YoVariable) controlVarsHashMap.get(name);");
-//   println(stream, 5, "if (ret != null) return true;");
-//   stream.println("");
-//   println(stream, 5, "if (rob.hasVar(name)) return true;");
-//   stream.println("");
-//   println(stream, 5, "return false;");
-//   println(stream, 3, "}");
-//
-//
-//   stream.println("}");
-// }
-
+   // public void createControllerBase(PrintStream stream)
+   // {
+   //   // Retrieve the class and package names
+   //   String name = this.getClass().getSimpleName();  // Robot Class
+   //   String baseName; // Name of ControllerBase
+   //   // Lets remove any Robot endings from the ControllerBase name
+   //   if (name.endsWith("Robot"))
+   //     baseName = name.substring(0, name.length() - "Robot".length());
+   //   else
+   //     baseName = name;
+   //
+   //   String packageName = this.getClass().getPackage().getName(); // Robot Package
+   //
+   //   stream.println("package " + packageName + ";");
+   //   stream.println("");
+   //   stream.println("import us.ihmc.simulationconstructionset.*;");
+   //   stream.println("import java.util.*;");
+   //   stream.println("");
+   //   stream.println("public class " + baseName + "ControllerBase implements YoVariableRegistry");
+   //   stream.println("{");
+   //   println(stream, 3, "protected " + name + " rob;");
+   //   stream.println("");
+   //   println(stream, 3, "// These are the variables that are automatically created when the robot is created:");
+   //   //println(stream, 3, "YoVariable t;");
+   //
+   //   //VarList robVariables = new VarList("Robot Variables");
+   //   // Print the joint variables:
+   //   this.printVarBase(stream, robVars);
+   //   stream.println("");
+   //   this.printVarBase(stream, groundVars);
+   //
+   //   //for(int jointNum = 0; jointNum < rootJoints.size(); jointNum++)
+   //   //{
+   //    // Joint rootJoint = (Joint) rootJoints.get(jointNum);
+   //    // recursivelyPrintJointBase(rootJoint, stream, robVariables);
+   //   //}
+   //
+   //   stream.println("");
+   //   println(stream, 3, "// User defined control variables will be placed in this ArrayList when they are registered:");
+   //   println(stream, 3, "ArrayList controlVars = new ArrayList();");
+   //   println(stream, 3, "LinkedHashMap controlVarsHashMap = new LinkedHashMap();");
+   //   stream.println("");
+   //   println(stream, 3, "public " + baseName + "ControllerBase(" + name + " rob)");
+   //   println(stream, 3, "{");
+   //   println(stream, 5, "this.rob = rob;");
+   //   stream.println("");
+   //   println(stream, 5, "// Get the variables that are stored with the robot:");
+   //   stream.println("");
+   //
+   //   //println(stream, 5, "t = rob.getVar(\"t\");");
+   //   stream.println("");
+   //
+   //   //
+   //   for(int varNum=0; varNum<robVars.size(); varNum++)
+   //   {
+   //     YoVariable var = robVars.get(varNum);
+   //
+   //     if(varNum % 3 == 0) {stream.print("     ");}
+   //     stream.print(var.getName() + " = rob.getVariable(\"" + var.getName() + "\"); ");
+   //     if(varNum % 3 == 2) {stream.println("");}
+   //   }
+   //
+   //   stream.println("");
+   //   for(int varNum=0; varNum<groundVars.size(); varNum++)
+   //   {
+   //     YoVariable var = groundVars.get(varNum);
+   //
+   //     if(varNum % 3 == 0) {stream.print("     ");}
+   //     stream.print(var.getName() + " = rob.getVariable(\"" + var.getName() + "\"); ");
+   //     if(varNum % 3 == 2) {stream.println("");}
+   //   }
+   //
+   //
+   //   stream.println("");
+   //   println(stream, 3, "}");
+   //   stream.println("");
+   //   println(stream, 3, "public void registerVariable(YoVariable var)");
+   //   println(stream, 3, "{");
+   //   println(stream, 5, "if (controlVarsHashMap.containsKey(var.getName())) System.err.println(\"Warning:  \" + var.getName() + \" has already been registered\");");
+   //   println(stream, 5, "controlVarsHashMap.put(var.getName(), var);");
+   //   println(stream, 5, "controlVars.add(var);");
+   //   println(stream, 3, "}");
+   //   stream.println("");
+   //   println(stream, 3, "public YoVariable[] getControlVars()");
+   //   println(stream, 3, "{");
+   //   println(stream, 5, "YoVariable[] ret = new YoVariable[controlVars.size()];");
+   //   println(stream, 5, "controlVars.toArray(ret);");
+   //   println(stream, 5, "return ret;");
+   //   println(stream, 3, "}");
+   //
+   //   stream.println("");
+   //   println(stream, 3, "public YoVariable getVariable(String name)");
+   //   println(stream, 3, "{");
+   //   println(stream, 5, "YoVariable ret = null;");
+   //   println(stream, 5, "ret = (YoVariable) controlVarsHashMap.get(name);");
+   //   println(stream, 5, "if (ret != null) return ret;");
+   //   stream.println("");
+   //   println(stream, 5, "if (rob.hasVar(name)) return rob.getVariable(name);");
+   //   stream.println("");
+   //   println(stream, 5, "System.err.println(\"Variable \" + name + \" not found in " + name + "ControllerBase.getVariable()\");");
+   //   println(stream, 5, "return null;");
+   //   println(stream, 3, "}");
+   //
+   //
+   //   stream.println("");
+   //   println(stream, 3, "public boolean hasVar(String name)");
+   //   println(stream, 3, "{");
+   //   println(stream, 5, "YoVariable ret = null;");
+   //   println(stream, 5, "ret = (YoVariable) controlVarsHashMap.get(name);");
+   //   println(stream, 5, "if (ret != null) return true;");
+   //   stream.println("");
+   //   println(stream, 5, "if (rob.hasVar(name)) return true;");
+   //   stream.println("");
+   //   println(stream, 5, "return false;");
+   //   println(stream, 3, "}");
+   //
+   //
+   //   stream.println("}");
+   // }
 
    /**
     * {@literal Outputs a Java class which can be used as a base for this Robot's RobotController.  This
@@ -1689,18 +1692,18 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
     * @param file File where the code will be stored.  Ensure that the name of this file corresponds to the
     * name of the class it contains.
     */
-// public void createControllerBase(File file)
-// {
-//   try
-//   {
-//     PrintStream stream = new PrintStream(file);
-//     createControllerBase(stream);
-//   }
-//   catch (FileNotFoundException missing)
-//   {
-//       System.out.println("The file could not be written for this reason:\n\t" + missing.getMessage());
-//   }
-// }
+   // public void createControllerBase(File file)
+   // {
+   //   try
+   //   {
+   //     PrintStream stream = new PrintStream(file);
+   //     createControllerBase(stream);
+   //   }
+   //   catch (FileNotFoundException missing)
+   //   {
+   //       System.out.println("The file could not be written for this reason:\n\t" + missing.getMessage());
+   //   }
+   // }
 
    /**
     * {@literal Outputs a Java class which can be used as a base for this Robot's RobotController.  This
@@ -1709,25 +1712,25 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
     * without 'Robot'&gtControllerBase.java and stored in the same directory as the class file
     * that created it.}
     */
-// public void createControllerBase()
-// {
-//   File controllerBase;
-//   try
-//   {
-//     controllerBase = new File(getPath().toURI());
-//     PrintStream stream = new PrintStream(controllerBase);
-//     createControllerBase(stream);
-//   }
-//   catch (FileNotFoundException missing)
-//   {
-//     System.out.println("The specified file could not be created and generated the following error message:\n\t" + missing.getMessage());
-//   }
-//   catch (URISyntaxException badFormat)
-//   {
-//     System.out.println("Path to " + this.getClass().getName() + " could not be calculated and the following error was observed:\n\t" + badFormat.getMessage());
-//   }
-//
-// }
+   // public void createControllerBase()
+   // {
+   //   File controllerBase;
+   //   try
+   //   {
+   //     controllerBase = new File(getPath().toURI());
+   //     PrintStream stream = new PrintStream(controllerBase);
+   //     createControllerBase(stream);
+   //   }
+   //   catch (FileNotFoundException missing)
+   //   {
+   //     System.out.println("The specified file could not be created and generated the following error message:\n\t" + missing.getMessage());
+   //   }
+   //   catch (URISyntaxException badFormat)
+   //   {
+   //     System.out.println("Path to " + this.getClass().getName() + " could not be calculated and the following error was observed:\n\t" + badFormat.getMessage());
+   //   }
+   //
+   // }
 
    /**
     * Build a path to a new ControllerBase file in the same directory as the robot's .class file.
@@ -1797,8 +1800,8 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
       catch (MalformedURLException broken)
       {
          // Something is wrong with the path, tell the user
-         System.err.println("Path to " + c.getName() + " could not be calculated and the following error was observed:\n\t" + broken.getMessage()
-                            + "\n\tPath: " + temp);
+         System.err.println("Path to " + c.getName() + " could not be calculated and the following error was observed:\n\t" + broken.getMessage() + "\n\tPath: "
+               + temp);
 
          return null;
       }
@@ -1821,7 +1824,6 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
 
       stream.println(line);
    }
-
 
    /**
     * This method provides a convienent means to print out VarLists in a pretty class friendly form.
@@ -1881,7 +1883,6 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
       kp_body.setForce(fx, fy, fz);
    }
 
-
    @Override
    public YoVariable<?> getVariable(String variableName)
    {
@@ -1935,23 +1936,24 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
    {
       return getRobotsYoVariableRegistry().getVariables(nameSpace);
    }
-   
+
    public ArrayList<Graphics3DObject> getStaticLinkGraphics()
    {
       return staticLinkGraphics;
    }
-   
+
    public Link getLink(String linkName)
    {
-      for(Joint rootJoint : rootJoints)
+      for (Joint rootJoint : rootJoints)
       {
          Link link = rootJoint.getLink(linkName);
-         if (link != null) return link;
+         if (link != null)
+            return link;
       }
-      
+
       return null;
    }
-   
+
    public void freezeJointAtZero(Joint jointToFreeze)
    {
       Vector3D jointToFreezeOffset = new Vector3D();
@@ -1963,9 +1965,9 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
       Link parentLink = parentJoint.getLink();
       parentLink = Link.combineLinks(parentLink.getName(), parentLink, jointToFreeze.getLink(), jointToFreezeOffset);
       parentJoint.setLink(parentLink);
-      
+
       ArrayList<Joint> jointsToMove = new ArrayList<Joint>();
-      
+
       ArrayList<Joint> childrenJoints = jointToFreeze.getChildrenJoints();
       for (Joint childJoint : childrenJoints)
       {
@@ -1976,28 +1978,29 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
          childOffset.add(jointToFreezeOffset);
          childJoint.changeOffsetVector(childOffset);
       }
-      
+
       for (Joint jointToMove : jointsToMove)
       {
          jointToFreeze.removeChildJoint(jointToMove);
          parentJoint.addJoint(jointToMove);
       }
    }
-   
+
    public boolean verifySetupProperly(double epsilon)
    {
       for (Joint rootJoint : rootJoints)
       {
          boolean rootJointSetupProperly = rootJoint.physics.verifySetupProperly(epsilon);
-         if (!rootJointSetupProperly) return false;
+         if (!rootJointSetupProperly)
+            return false;
       }
-      
+
       return true;
    }
 
    public Joint getJoint(String name)
    {
-      for (int i=0; i<rootJoints.size(); i++)
+      for (int i = 0; i < rootJoints.size(); i++)
       {
          Joint rootJoint = rootJoints.get(i);
          Joint joint = rootJoint.recursivelyGetJoint(name);
@@ -2006,12 +2009,12 @@ public class Robot implements YoVariableHolder, GroundContactPointsHolder
       }
       return null;
    }
-   
-//   public void resetup()
-//   {
-//      for (Joint rootJoint : rootJoints)
-//      {
-//         rootJoint.resetup();
-//      }
-//   }
+
+   //   public void resetup()
+   //   {
+   //      for (Joint rootJoint : rootJoints)
+   //      {
+   //         rootJoint.resetup();
+   //      }
+   //   }
 }
