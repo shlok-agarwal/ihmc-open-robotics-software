@@ -7,6 +7,7 @@ import us.ihmc.communication.util.NetworkPorts;
 import us.ihmc.exampleSimulations.genericQuadruped.model.GenericQuadrupedModelFactory;
 import us.ihmc.exampleSimulations.genericQuadruped.model.GenericQuadrupedPhysicalProperties;
 import us.ihmc.exampleSimulations.genericQuadruped.model.GenericQuadrupedSensorInformation;
+import us.ihmc.exampleSimulations.genericQuadruped.parameters.GenericQuadrupedControllerCoreOptimizationSettings;
 import us.ihmc.exampleSimulations.genericQuadruped.parameters.GenericQuadrupedStateEstimatorParameters;
 import us.ihmc.graphicsDescription.yoGraphics.YoGraphicsListRegistry;
 import us.ihmc.humanoidRobotics.bipedSupportPolygons.ContactablePlaneBody;
@@ -66,6 +67,7 @@ public class GenericQuadrupedControllerFactoryDummyOutputDemo
       QuadrupedPhysicalProperties physicalProperties = new GenericQuadrupedPhysicalProperties();
       GenericQuadrupedModelFactory modelFactory = new GenericQuadrupedModelFactory();
       FullQuadrupedRobotModel fullRobotModel = modelFactory.createFullRobotModel();
+      GenericQuadrupedControllerCoreOptimizationSettings controllerCoreOptimizationSettings = new GenericQuadrupedControllerCoreOptimizationSettings();
 
       /*
        * Create registries for every thread
@@ -140,8 +142,10 @@ public class GenericQuadrupedControllerFactoryDummyOutputDemo
       JointDesiredOutputList jointDesiredOutputList = new JointDesiredOutputList(fullRobotModel.getOneDoFJoints());
       YoGraphicsListRegistry ignoredYoGraphicsListRegistry  = new YoGraphicsListRegistry();
 
-      runtimeEnvironment = new QuadrupedRuntimeEnvironment(DT, controllerTime, fullRobotModel, jointDesiredOutputList, registry, yoGraphicsListRegistry,
-                                                           ignoredYoGraphicsListRegistry, dataProducer, contactableFeet, footSwitches, GRAVITY);
+      runtimeEnvironment = new QuadrupedRuntimeEnvironment(DT, controllerTime, fullRobotModel, controllerCoreOptimizationSettings, jointDesiredOutputList,
+                                                           registry, yoGraphicsListRegistry, ignoredYoGraphicsListRegistry, dataProducer, contactableFeet,
+                                                           footSwitches, GRAVITY);
+
       controllerManager = new QuadrupedForceControllerManager(runtimeEnvironment, physicalProperties);
 
       InputStream resourceAsStream = getClass().getResourceAsStream(modelFactory.getParameterResourceName(QuadrupedControlMode.FORCE));

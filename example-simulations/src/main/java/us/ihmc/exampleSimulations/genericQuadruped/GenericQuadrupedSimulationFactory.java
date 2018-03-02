@@ -1,9 +1,11 @@
 package us.ihmc.exampleSimulations.genericQuadruped;
 
+import us.ihmc.commonWalkingControlModules.momentumBasedController.optimization.ControllerCoreOptimizationSettings;
 import us.ihmc.communication.net.NetClassList;
 import us.ihmc.exampleSimulations.genericQuadruped.model.GenericQuadrupedModelFactory;
 import us.ihmc.exampleSimulations.genericQuadruped.model.GenericQuadrupedPhysicalProperties;
 import us.ihmc.exampleSimulations.genericQuadruped.model.GenericQuadrupedSensorInformation;
+import us.ihmc.exampleSimulations.genericQuadruped.parameters.GenericQuadrupedControllerCoreOptimizationSettings;
 import us.ihmc.exampleSimulations.genericQuadruped.parameters.GenericQuadrupedPositionBasedCrawlControllerParameters;
 import us.ihmc.exampleSimulations.genericQuadruped.parameters.GenericQuadrupedSimulationInitialPositionParameters;
 import us.ihmc.exampleSimulations.genericQuadruped.parameters.GenericQuadrupedStateEstimatorParameters;
@@ -54,6 +56,7 @@ public class GenericQuadrupedSimulationFactory
       GroundContactParameters groundContactParameters = new GenericQuadrupedGroundContactParameters();
       QuadrupedSensorInformation sensorInformation = new GenericQuadrupedSensorInformation();
       StateEstimatorParameters stateEstimatorParameters = new GenericQuadrupedStateEstimatorParameters();
+      ControllerCoreOptimizationSettings controllerCoreOptimizationSettings = new GenericQuadrupedControllerCoreOptimizationSettings();
       QuadrupedPositionBasedCrawlControllerParameters positionBasedCrawlControllerParameters = new GenericQuadrupedPositionBasedCrawlControllerParameters();
 
       FullQuadrupedRobotModel fullRobotModel = modelFactory.createFullRobotModel();
@@ -79,6 +82,7 @@ public class GenericQuadrupedSimulationFactory
       simulationFactory.setUseTrackAndDolly(USE_TRACK_AND_DOLLY);
       simulationFactory.setInitialPositionParameters(initialPositionParameters);
       simulationFactory.setFullRobotModel(fullRobotModel);
+      simulationFactory.setControllerCoreOptimizationSettings(controllerCoreOptimizationSettings);
       simulationFactory.setPhysicalProperties(physicalProperties);
       simulationFactory.setControlMode(CONTROL_MODE);
       simulationFactory.setUseNetworking(USE_NETWORKING);

@@ -1,10 +1,12 @@
 package us.ihmc.quadrupedRobotics.model;
 
+import us.ihmc.commonWalkingControlModules.momentumBasedController.optimization.ControllerCoreOptimizationSettings;
 import us.ihmc.communication.streamingData.GlobalDataProducer;
 import us.ihmc.graphicsDescription.yoGraphics.YoGraphicsListRegistry;
 import us.ihmc.humanoidRobotics.bipedSupportPolygons.ContactablePlaneBody;
 import us.ihmc.robotModels.FullQuadrupedRobotModel;
 import us.ihmc.sensorProcessing.outputData.JointDesiredOutputList;
+import us.ihmc.tools.factories.RequiredFactoryField;
 import us.ihmc.yoVariables.registry.YoVariableRegistry;
 import us.ihmc.yoVariables.variable.YoDouble;
 import us.ihmc.robotics.robotSide.QuadrantDependentList;
@@ -20,13 +22,16 @@ public class QuadrupedRuntimeEnvironment
    private final YoGraphicsListRegistry graphicsListRegistryForDetachedOverhead;
    private final GlobalDataProducer globalDataProducer;
    private final JointDesiredOutputList jointDesiredOutputList;
+   private final ControllerCoreOptimizationSettings controllerCoreOptimizationSettings;
+
    private final double gravityZ;
 
    // TODO: These are used to provide feedback from the controllers to the state estimator. Can they be moved somewhere else?
    private final QuadrantDependentList<FootSwitchInterface> footSwitches;
 
    public QuadrupedRuntimeEnvironment(double controlDT, YoDouble robotTimestamp, FullQuadrupedRobotModel fullRobotModel,
-                                      JointDesiredOutputList jointDesiredOutputList, YoVariableRegistry parentRegistry, YoGraphicsListRegistry graphicsListRegistry,
+                                      ControllerCoreOptimizationSettings controllerCoreOptimizationSettings, JointDesiredOutputList jointDesiredOutputList,
+                                      YoVariableRegistry parentRegistry, YoGraphicsListRegistry graphicsListRegistry,
                                       YoGraphicsListRegistry graphicsListRegistryForDetachedOverhead, GlobalDataProducer globalDataProducer,
                                       QuadrantDependentList<ContactablePlaneBody> contactableFeet, QuadrantDependentList<FootSwitchInterface> footSwitches,
                                       double gravity)
@@ -34,6 +39,7 @@ public class QuadrupedRuntimeEnvironment
       this.controlDT = controlDT;
       this.robotTimestamp = robotTimestamp;
       this.fullRobotModel = fullRobotModel;
+      this.controllerCoreOptimizationSettings = controllerCoreOptimizationSettings;
       this.parentRegistry = parentRegistry;
       this.graphicsListRegistry = graphicsListRegistry;
       this.graphicsListRegistryForDetachedOverhead = graphicsListRegistryForDetachedOverhead;
@@ -81,6 +87,11 @@ public class QuadrupedRuntimeEnvironment
    public GlobalDataProducer getGlobalDataProducer()
    {
       return globalDataProducer;
+   }
+
+   public ControllerCoreOptimizationSettings getControllerCoreOptimizationSettings()
+   {
+      return controllerCoreOptimizationSettings;
    }
 
    public QuadrantDependentList<FootSwitchInterface> getFootSwitches()
