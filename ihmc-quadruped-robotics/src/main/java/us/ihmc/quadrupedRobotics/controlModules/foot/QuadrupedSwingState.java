@@ -5,7 +5,6 @@ import us.ihmc.euclid.referenceFrame.FrameVector3D;
 import us.ihmc.euclid.referenceFrame.ReferenceFrame;
 import us.ihmc.quadrupedRobotics.controller.force.QuadrupedForceControllerToolbox;
 import us.ihmc.quadrupedRobotics.controller.force.toolbox.QuadrupedSolePositionController;
-import us.ihmc.quadrupedRobotics.controller.force.toolbox.QuadrupedSolePositionControllerSetpoints;
 import us.ihmc.quadrupedRobotics.planning.YoQuadrupedTimedStep;
 import us.ihmc.quadrupedRobotics.planning.trajectory.ThreeDoFSwingFootTrajectory;
 import us.ihmc.quadrupedRobotics.util.TimeInterval;
@@ -15,7 +14,7 @@ import us.ihmc.yoVariables.registry.YoVariableRegistry;
 import us.ihmc.yoVariables.variable.YoBoolean;
 import us.ihmc.yoVariables.variable.YoDouble;
 
-public class QuadrupedSwingState extends QuadrupedFootState
+public class QuadrupedSwingState extends QuadrupedUnconstrainedFootState
 {
    private static final ReferenceFrame worldFrame = ReferenceFrame.getWorldFrame();
 
@@ -31,9 +30,6 @@ public class QuadrupedSwingState extends QuadrupedFootState
    private final YoDouble timestamp;
    private final YoQuadrupedTimedStep currentStepCommand;
 
-   private final QuadrupedSolePositionController solePositionController;
-   private final QuadrupedSolePositionControllerSetpoints solePositionControllerSetpoints;
-
    private final QuadrupedForceControllerToolbox controllerToolbox;
 
    private final ReferenceFrame soleFrame;
@@ -41,15 +37,15 @@ public class QuadrupedSwingState extends QuadrupedFootState
    public QuadrupedSwingState(RobotQuadrant robotQuadrant, QuadrupedForceControllerToolbox controllerToolbox, QuadrupedSolePositionController solePositionController,
                               YoBoolean stepCommandIsValid, YoQuadrupedTimedStep currentStepCommand, YoVariableRegistry registry)
    {
+      super("swing", robotQuadrant, controllerToolbox, solePositionController, registry);
+
       this.robotQuadrant = robotQuadrant;
       this.controllerToolbox = controllerToolbox;
-      this.solePositionController = solePositionController;
       this.stepCommandIsValid = stepCommandIsValid;
       this.timestamp = controllerToolbox.getRuntimeEnvironment().getRobotTimestamp();
       this.currentStepCommand = currentStepCommand;
 
       this.parameters = controllerToolbox.getFootControlModuleParameters();
-      this.solePositionControllerSetpoints = new QuadrupedSolePositionControllerSetpoints(robotQuadrant);
 
       soleFrame = controllerToolbox.getReferenceFrames().getSoleFrame(robotQuadrant);
 
@@ -125,6 +121,8 @@ public class QuadrupedSwingState extends QuadrupedFootState
          soleForceCommand.changeFrame(worldFrame);
       }
 
+      super.doControl();
+
       // Trigger support phase.
       if (currentTime >= touchDownTime)
       {
@@ -132,10 +130,14 @@ public class QuadrupedSwingState extends QuadrupedFootState
          {
             stepTransitionCallback.onTouchDown(robotQuadrant);
          }
+
          return QuadrupedFootControlModule.FootEvent.TIMEOUT;
       }
       else
+      {
+         super.doControl();
          return null;
+      }
    }
 
    @Override
