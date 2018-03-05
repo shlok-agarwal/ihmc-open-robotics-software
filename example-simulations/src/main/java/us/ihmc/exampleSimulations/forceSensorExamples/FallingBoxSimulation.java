@@ -47,7 +47,7 @@ public class FallingBoxSimulation
       FloatingJoint floatingJointOne = (FloatingJoint) robotWithGCP.getRootJoints().get(0);
       floatingJointOne.setPosition(initialPositionOne);
       floatingJointOne.setQuaternion(initialOrientation);
-      GroundContactModel groundModel = new LinearGroundContactModel(robotWithGCP, 1422, 150.6, 50.0, 1000.0, robotWithGCP.getRobotsYoVariableRegistry());
+      GroundContactModel groundModel = new LinearGroundContactModel(robotWithGCP, 1422, 15.6, 125.0, 300.0, robotWithGCP.getRobotsYoVariableRegistry()); // same value with DRCSCSInitialSetup.
       robotWithGCP.setGroundContactModel(groundModel);
       FallingBoxRobotGCPBasedEstimator gcpBasedEstimator = new FallingBoxRobotGCPBasedEstimator(robotWithGCP, dt);
       robotWithGCP.setController(gcpBasedEstimator);
@@ -66,6 +66,8 @@ public class FallingBoxSimulation
       List<Robot> allSimulatedRobotList = new ArrayList<Robot>();
       allSimulatedRobotList.add(robotWithGCP);
       allSimulatedRobotList.add(robotWithCS);
+      robotWithGCP.setGravity(new Vector3D(0.0, 0.0, -9.81));
+      robotWithCS.setGravity(new Vector3D(0.0, 0.0, -9.81));
 
       // Env has static collision shape.
       FlatGroundEnvironment environment = new FlatGroundEnvironment();
@@ -80,6 +82,8 @@ public class FallingBoxSimulation
       staticLinkGraphics.addCoordinateSystem(0.1);
       scs.addStaticLinkGraphics(staticLinkGraphics);
       scs.addStaticLinkGraphics(environment.getTerrainObject3D().getLinkGraphics());
+
+      scs.addYoGraphicsListRegistry(csBasedEstimator.graphicsRegistry);
 
       // simulate.
       DefaultCollisionVisualizer collisionVisualizer = new DefaultCollisionVisualizer(100.0, 100.0, 0.01, scs, 1000);
