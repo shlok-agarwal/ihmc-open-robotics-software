@@ -135,7 +135,6 @@ public class QuadrupedSwingState extends QuadrupedUnconstrainedFootState
       }
       else
       {
-         super.doControl();
          return null;
       }
    }
