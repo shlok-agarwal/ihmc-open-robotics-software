@@ -12,6 +12,8 @@ import us.ihmc.yoVariables.variable.YoDouble;
 import us.ihmc.robotics.robotSide.QuadrantDependentList;
 import us.ihmc.robotics.sensors.FootSwitchInterface;
 
+import java.util.List;
+
 public class QuadrupedRuntimeEnvironment
 {
    private final double controlDT;
@@ -27,6 +29,7 @@ public class QuadrupedRuntimeEnvironment
    private final double gravityZ;
 
    private final QuadrantDependentList<ContactablePlaneBody> contactableFeet;
+   private final List<ContactablePlaneBody> contactablePlaneBodies;
    // TODO: These are used to provide feedback from the controllers to the state estimator. Can they be moved somewhere else?
    private final QuadrantDependentList<FootSwitchInterface> footSwitches;
 
@@ -34,8 +37,8 @@ public class QuadrupedRuntimeEnvironment
                                       ControllerCoreOptimizationSettings controllerCoreOptimizationSettings, JointDesiredOutputList jointDesiredOutputList,
                                       YoVariableRegistry parentRegistry, YoGraphicsListRegistry graphicsListRegistry,
                                       YoGraphicsListRegistry graphicsListRegistryForDetachedOverhead, GlobalDataProducer globalDataProducer,
-                                      QuadrantDependentList<ContactablePlaneBody> contactableFeet, QuadrantDependentList<FootSwitchInterface> footSwitches,
-                                      double gravity)
+                                      QuadrantDependentList<ContactablePlaneBody> contactableFeet, List<ContactablePlaneBody> contactablePlaneBodies,
+                                      QuadrantDependentList<FootSwitchInterface> footSwitches, double gravity)
    {
       this.controlDT = controlDT;
       this.robotTimestamp = robotTimestamp;
@@ -47,6 +50,7 @@ public class QuadrupedRuntimeEnvironment
       this.globalDataProducer = globalDataProducer;
       this.footSwitches = footSwitches;
       this.contactableFeet = contactableFeet;
+      this.contactablePlaneBodies = contactablePlaneBodies;
       this.gravityZ = Math.abs(gravity);
       this.jointDesiredOutputList = jointDesiredOutputList;
    }
@@ -104,6 +108,11 @@ public class QuadrupedRuntimeEnvironment
    public QuadrantDependentList<ContactablePlaneBody> getContactableFeet()
    {
       return contactableFeet;
+   }
+
+   public List<ContactablePlaneBody> getContactablePlaneBodies()
+   {
+      return contactablePlaneBodies;
    }
 
    public double getGravity()
