@@ -32,7 +32,7 @@ import us.ihmc.tools.exceptions.NoConvergenceException;
 
 public class VirtualModelControlOptimizationControlModule
 {
-   private static final boolean DEBUG = false;
+   private static final boolean DEBUG = true;
 
    private final YoVariableRegistry registry = new YoVariableRegistry(getClass().getSimpleName());
 

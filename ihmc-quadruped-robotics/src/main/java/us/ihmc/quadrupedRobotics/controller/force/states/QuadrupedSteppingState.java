@@ -8,6 +8,7 @@ import us.ihmc.commonWalkingControlModules.controllerCore.command.ControllerCore
 import us.ihmc.commonWalkingControlModules.controllerCore.command.feedbackController.FeedbackControlCommandList;
 import us.ihmc.commonWalkingControlModules.controllerCore.command.inverseDynamics.PlaneContactStateCommand;
 import us.ihmc.commonWalkingControlModules.controllerCore.command.lowLevel.LowLevelOneDoFJointDesiredDataHolder;
+import us.ihmc.commonWalkingControlModules.controllerCore.command.virtualModelControl.ControlledBodiesCommand;
 import us.ihmc.commonWalkingControlModules.momentumBasedController.optimization.ControllerCoreOptimizationSettings;
 import us.ihmc.communication.net.PacketConsumer;
 import us.ihmc.communication.streamingData.GlobalDataProducer;
@@ -39,6 +40,7 @@ import us.ihmc.robotics.screwTheory.RigidBody;
 import us.ihmc.robotics.stateMachines.eventBasedStateMachine.FiniteStateMachine;
 import us.ihmc.robotics.stateMachines.eventBasedStateMachine.FiniteStateMachineBuilder;
 import us.ihmc.robotics.stateMachines.eventBasedStateMachine.FiniteStateMachineYoVariableTrigger;
+import us.ihmc.robotics.time.ExecutionTimer;
 import us.ihmc.sensorProcessing.outputData.JointDesiredOutput;
 import us.ihmc.yoVariables.registry.YoVariableRegistry;
 import us.ihmc.yoVariables.variable.YoEnum;
@@ -73,7 +75,9 @@ public class QuadrupedSteppingState implements QuadrupedController
    private final QuadrupedBalanceManager balanceManager;
    private final QuadrupedBodyOrientationManager bodyOrientationManager;
 
+   private final ExecutionTimer controllerCoreTimer = new ExecutionTimer("controllerCoreTimer", 1.0, registry);
    private final ControllerCoreCommand controllerCoreCommand = new ControllerCoreCommand(WholeBodyControllerCoreMode.VIRTUAL_MODEL);
+   private final ControlledBodiesCommand controlledBodiesCommand;
    private final WholeBodyControllerCore controllerCore;
 
    public QuadrupedSteppingState(QuadrupedRuntimeEnvironment runtimeEnvironment, QuadrupedForceControllerToolbox controllerToolbox,
@@ -133,6 +137,8 @@ public class QuadrupedSteppingState implements QuadrupedController
       }
 
       this.quadrupedSteppingStatePacket = new QuadrupedSteppingStatePacket();
+
+      controlledBodiesCommand = registerControlledBodies();
 
       this.stateMachine = buildStateMachine(runtimeEnvironment);
       this.stepTrigger = new FiniteStateMachineYoVariableTrigger<>(stateMachine, "stepTrigger", registry, QuadrupedSteppingRequestedEvent.class);
@@ -220,6 +226,19 @@ public class QuadrupedSteppingState implements QuadrupedController
       return builder.build(QuadrupedSteppingStateEnum.STAND);
    }
 
+   public ControlledBodiesCommand registerControlledBodies()
+   {
+      FullQuadrupedRobotModel fullRobotModel = controllerToolbox.getFullRobotModel();
+      ControlledBodiesCommand command = new ControlledBodiesCommand();
+      command.addBodyToControl(fullRobotModel.getFoot(RobotQuadrant.FRONT_RIGHT));
+      command.addBodyToControl(fullRobotModel.getFoot(RobotQuadrant.FRONT_LEFT));
+      command.addBodyToControl(fullRobotModel.getFoot(RobotQuadrant.HIND_RIGHT));
+      command.addBodyToControl(fullRobotModel.getFoot(RobotQuadrant.HIND_LEFT));
+      command.addBodyToControl(fullRobotModel.getBody());
+
+      return command;
+   }
+
    @Override
    public void onEntry()
    {
@@ -257,6 +276,12 @@ public class QuadrupedSteppingState implements QuadrupedController
          runtimeEnvironment.getGlobalDataProducer().queueDataToSend(quadrupedSteppingStatePacket);
       }
 
+      submitControllerCoreCommands();
+
+      controllerCoreTimer.startMeasurement();
+      controllerCore.submitControllerCoreCommand(controllerCoreCommand);
+      controllerCore.compute();
+      controllerCoreTimer.stopMeasurement();
 
       return null;
    }
@@ -270,19 +295,21 @@ public class QuadrupedSteppingState implements QuadrupedController
       for (RobotQuadrant robotQuadrant : RobotQuadrant.values)
       {
          controllerCoreCommand.addFeedbackControlCommand(feetManager.getFeedbackControlCommand(robotQuadrant));
-         controllerCoreCommand.addInverseDynamicsCommand(feetManager.getInverseDynamicsCommand(robotQuadrant));
+         controllerCoreCommand.addVirtualModelControlCommand(feetManager.getInverseDynamicsCommand(robotQuadrant));
 
          YoPlaneContactState contactState = controllerToolbox.getFootContactState(robotQuadrant);
          PlaneContactStateCommand planeContactStateCommand = planeContactStateCommandPool.add();
          contactState.getPlaneContactStateCommand(planeContactStateCommand);
          //planeContactStateCommand.setUseHighCoPDamping(false);
-         controllerCoreCommand.addInverseDynamicsCommand(planeContactStateCommand);
+         controllerCoreCommand.addVirtualModelControlCommand(planeContactStateCommand);
       }
 
       controllerCoreCommand.addFeedbackControlCommand(bodyOrientationManager.getFeedbackControlCommand());
-      controllerCoreCommand.addInverseDynamicsCommand(bodyOrientationManager.getInverseDynamicsCommand());
+      controllerCoreCommand.addVirtualModelControlCommand(bodyOrientationManager.getInverseDynamicsCommand());
 
-      controllerCoreCommand.addInverseDynamicsCommand(balanceManager.getInverseDynamicsCommand());
+      controllerCoreCommand.addVirtualModelControlCommand(controlledBodiesCommand);
+
+      controllerCoreCommand.addVirtualModelControlCommand(balanceManager.getInverseDynamicsCommand());
    }
 
    @Override
