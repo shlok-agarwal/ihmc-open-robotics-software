@@ -26,6 +26,7 @@ public class QuadrupedRuntimeEnvironment
 
    private final double gravityZ;
 
+   private final QuadrantDependentList<ContactablePlaneBody> contactableFeet;
    // TODO: These are used to provide feedback from the controllers to the state estimator. Can they be moved somewhere else?
    private final QuadrantDependentList<FootSwitchInterface> footSwitches;
 
@@ -45,6 +46,7 @@ public class QuadrupedRuntimeEnvironment
       this.graphicsListRegistryForDetachedOverhead = graphicsListRegistryForDetachedOverhead;
       this.globalDataProducer = globalDataProducer;
       this.footSwitches = footSwitches;
+      this.contactableFeet = contactableFeet;
       this.gravityZ = Math.abs(gravity);
       this.jointDesiredOutputList = jointDesiredOutputList;
    }
@@ -97,6 +99,11 @@ public class QuadrupedRuntimeEnvironment
    public QuadrantDependentList<FootSwitchInterface> getFootSwitches()
    {
       return footSwitches;
+   }
+
+   public QuadrantDependentList<ContactablePlaneBody> getContactableFeet()
+   {
+      return contactableFeet;
    }
 
    public double getGravity()
