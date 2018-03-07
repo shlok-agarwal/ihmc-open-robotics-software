@@ -1,5 +1,6 @@
 package us.ihmc.quadrupedRobotics.controlModules.foot;
 
+import us.ihmc.commonWalkingControlModules.bipedSupportPolygons.YoPlaneContactState;
 import us.ihmc.euclid.referenceFrame.FramePoint3D;
 import us.ihmc.euclid.referenceFrame.FrameVector3D;
 import us.ihmc.euclid.referenceFrame.ReferenceFrame;
@@ -74,6 +75,8 @@ public class QuadrupedSwingState extends QuadrupedUnconstrainedFootState
       solePositionController.reset();
       solePositionController.getGains().set(parameters.getSolePositionGains());
       solePositionControllerSetpoints.initialize(soleFrame);
+
+      controllerToolbox.getFootContactState(robotQuadrant).clear();
 
       touchdownTrigger.set(false);
    }
