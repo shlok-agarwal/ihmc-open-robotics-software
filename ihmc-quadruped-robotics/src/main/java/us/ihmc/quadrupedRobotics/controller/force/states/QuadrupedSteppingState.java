@@ -1,10 +1,12 @@
 package us.ihmc.quadrupedRobotics.controller.force.states;
 
+import us.ihmc.commonWalkingControlModules.bipedSupportPolygons.YoPlaneContactState;
 import us.ihmc.commonWalkingControlModules.controllerCore.WholeBodyControlCoreToolbox;
 import us.ihmc.commonWalkingControlModules.controllerCore.WholeBodyControllerCore;
 import us.ihmc.commonWalkingControlModules.controllerCore.WholeBodyControllerCoreMode;
 import us.ihmc.commonWalkingControlModules.controllerCore.command.ControllerCoreCommand;
 import us.ihmc.commonWalkingControlModules.controllerCore.command.feedbackController.FeedbackControlCommandList;
+import us.ihmc.commonWalkingControlModules.controllerCore.command.inverseDynamics.PlaneContactStateCommand;
 import us.ihmc.commonWalkingControlModules.controllerCore.command.lowLevel.LowLevelOneDoFJointDesiredDataHolder;
 import us.ihmc.commonWalkingControlModules.momentumBasedController.optimization.ControllerCoreOptimizationSettings;
 import us.ihmc.communication.net.PacketConsumer;
@@ -30,6 +32,7 @@ import us.ihmc.quadrupedRobotics.providers.QuadrupedSoleWaypointInputProvider;
 import us.ihmc.quadrupedRobotics.providers.QuadrupedXGaitSettingsInputProvider;
 import us.ihmc.robotModels.FullHumanoidRobotModel;
 import us.ihmc.robotModels.FullQuadrupedRobotModel;
+import us.ihmc.robotics.lists.RecyclingArrayList;
 import us.ihmc.robotics.robotSide.RobotQuadrant;
 import us.ihmc.robotics.screwTheory.OneDoFJoint;
 import us.ihmc.robotics.stateMachines.eventBasedStateMachine.FiniteStateMachine;
@@ -255,44 +258,28 @@ public class QuadrupedSteppingState implements QuadrupedController
       return null;
    }
 
+   private final RecyclingArrayList<PlaneContactStateCommand> planeContactStateCommandPool = new RecyclingArrayList<>(4, PlaneContactStateCommand.class);
+
    private void submitControllerCoreCommands()
    {
+      planeContactStateCommandPool.clear();
 
       for (RobotQuadrant robotQuadrant : RobotQuadrant.values)
       {
          controllerCoreCommand.addFeedbackControlCommand(feetManager.getFeedbackControlCommand(robotQuadrant));
          controllerCoreCommand.addInverseDynamicsCommand(feetManager.getInverseDynamicsCommand(robotQuadrant));
 
-         /*
-         YoPlaneContactState contactState = controllerToolbox.getFootContactState(robotSide);
+         YoPlaneContactState contactState = controllerToolbox.getFootContactState(robotQuadrant);
          PlaneContactStateCommand planeContactStateCommand = planeContactStateCommandPool.add();
          contactState.getPlaneContactStateCommand(planeContactStateCommand);
-         planeContactStateCommand.setUseHighCoPDamping(isHighCoPDampingNeeded);
+         //planeContactStateCommand.setUseHighCoPDamping(false);
          controllerCoreCommand.addInverseDynamicsCommand(planeContactStateCommand);
-         */
       }
 
       controllerCoreCommand.addFeedbackControlCommand(bodyOrientationManager.getFeedbackControlCommand());
+      controllerCoreCommand.addInverseDynamicsCommand(bodyOrientationManager.getInverseDynamicsCommand());
+
       controllerCoreCommand.addInverseDynamicsCommand(balanceManager.getInverseDynamicsCommand());
-
-      /*
-       * FIXME: This is mainly used for resetting the integrators at touchdown.
-       * It is done in SingleSupportState.doTransitionOutOfAction. Need to
-       * figure out how to use directly the joint data holder instead of
-       * OneDoFJoint.
-       */
-      LowLevelOneDoFJointDesiredDataHolder jointDesiredDataHolder = controllerCoreCommand.getLowLevelOneDoFJointDesiredDataHolder();
-
-      for (OneDoFJoint joint : controllerToolbox.getFullRobotModel().getOneDoFJoints())
-      {
-         if (joint.getResetDesiredAccelerationIntegrator())
-         {
-            JointDesiredOutput jointData = jointDesiredDataHolder.getJointDesiredOutput(joint);
-            if (jointData == null)
-               jointData = jointDesiredDataHolder.registerJointWithEmptyData(joint);
-            jointData.setResetIntegrators(true);
-         }
-      }
    }
 
    @Override
