@@ -56,12 +56,14 @@ public class AtlasToeRobotModel extends AtlasRobotModel {
 	@Override
 	public WalkingControllerParameters getWalkingControllerParameters()
 	{
+		// momentum, swing, toe-off and other parameters.
 		return new TestWalkingControllerParameters(getJointMap(), getContactPointParameters());
 	}
 
 	@Override
 	public ICPWithTimeFreezingPlannerParameters getCapturePointPlannerParameters()
 	{
+		// changes COP offset for walking trajectories. Tuning parameters.
 		return new TestICPPlannerParameters(getPhysicalProperties());
 	}
 
@@ -105,54 +107,63 @@ public class AtlasToeRobotModel extends AtlasRobotModel {
 	      @Override
 	      public boolean controlHeightWithMomentum()
 	      {
-	         return false;
+	         // changes selection matrix. Now height governed by leg configurations.
+	    	  return false;
 	      }
 
 	      @Override
 	      public boolean useOptimizationBasedICPController()
 	      {
-	         return true;
+	         // uses icp optimization controller.
+	    	  return true;
 	      }
 
 	      @Override
 	      public boolean editStepTimingForReachability()
 	      {
-	         return true;
+	         // makes edit in timings to make sure step is reachable. default is false.
+	    	  return true;
 	      }
 
 	      @Override
 	      public boolean applySecondaryJointScaleDuringSwing()
 	      {
-	         return true;
+	         // didn't understand quite well
+	    	  return true;
 	      }
 
 	      @Override
 	      public LeapOfFaithParameters getLeapOfFaithParameters()
 	      {
-	         return new TestLeapOfFaithParameters();
+	         // parameters showing if weight should change at end of swing to get the leg down. rotate pelvis, etc.
+	    	  return new TestLeapOfFaithParameters();
 	      }
 
 	      @Override
 	      public LegConfigurationParameters getLegConfigurationParameters()
 	      {
-	         return new TestLegConfigurationParameters();
+	         // attempts to straighten leg and sets objective weights
+	    	  return new TestLegConfigurationParameters();
 	      }
 
 	      @Override
 	      public MomentumOptimizationSettings getMomentumOptimizationSettings()
 	      {
-	         return new TestMomentumOptimizationSettings(jointMap, contactPointParameters.getNumberOfContactableBodies());
+	         // increase joint acceleration weight.slows the system down.
+	    	  return new TestMomentumOptimizationSettings(jointMap, contactPointParameters.getNumberOfContactableBodies());
 	      }
 
 	      @Override
 	      public SwingTrajectoryParameters getSwingTrajectoryParameters()
 	      {
-	         return new TestSwingTrajectoryParameters();
+	         // do not avoid singularities in stance and swing. do heel and toe touchdown if possible.
+	    	  return new TestSwingTrajectoryParameters();
 	      }
 
 	      @Override
 	      public TestToeOffParameters getToeOffParameters()
 	      {
+	    	  // toe off criterias defined
 	         return new TestToeOffParameters(jointMap);
 	      }
 
@@ -329,7 +340,8 @@ public class AtlasToeRobotModel extends AtlasRobotModel {
 	      @Override
 	      public double getJointAccelerationWeight()
 	      {
-	         return 0.05;
+	         // increased by 10 times than usual. Maybe because we want the system to run slowly.
+	    	  return 0.05;
 	      }
 	   }
 
@@ -368,5 +380,4 @@ public class AtlasToeRobotModel extends AtlasRobotModel {
 	   }
 
 }
-
 
