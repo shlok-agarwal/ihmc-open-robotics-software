@@ -86,6 +86,15 @@ public class AtlasToeModelWalkingTest extends AvatarStraightLegWalkingTest {
 	 */
 
 	@Override
+	@ContinuousIntegrationTest(estimatedDuration =  20.0, categoriesOverride = {IntegrationCategory.IN_DEVELOPMENT})
+	@Test(timeout = 200000)
+	public void testCustomSteps() throws SimulationExceededMaximumTimeException
+	{
+		super.testCustomSteps();
+	}
+	
+	
+	@Override
 	public DRCRobotModel getRobotModel()
 	{
 		return atlasRobotModel;
@@ -101,7 +110,7 @@ public class AtlasToeModelWalkingTest extends AvatarStraightLegWalkingTest {
 	public static void main(String[] args) throws Exception
 	{
 		AtlasToeModelWalkingTest test = new AtlasToeModelWalkingTest();
-		test.testForwardWalking();
+		test.testCustomSteps();
 	}
 
 }
