@@ -102,6 +102,14 @@ public class AtlasStraightLegWalkingTest extends AvatarStraightLegWalkingTest
       super.testRandomHeightField(maxStepHeight, minStepHeight, maxStepIncrease);
    }
    */
+   
+	@Override
+	@ContinuousIntegrationTest(estimatedDuration =  20.0, categoriesOverride = {IntegrationCategory.IN_DEVELOPMENT})
+	@Test(timeout = 200000)
+	public void testCustomSteps() throws SimulationExceededMaximumTimeException
+	{
+		super.testCustomSteps();
+	}
 
    @Override
    public DRCRobotModel getRobotModel()
@@ -416,6 +424,6 @@ public class AtlasStraightLegWalkingTest extends AvatarStraightLegWalkingTest
    public static void main(String[] args) throws Exception
    {
       AtlasStraightLegWalkingTest test = new AtlasStraightLegWalkingTest();
-      test.testSteppingDown();
+      test.testCustomSteps();
    }
 }

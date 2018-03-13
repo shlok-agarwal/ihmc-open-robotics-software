@@ -111,6 +111,8 @@ public class CustomFootToeContactPoints<E extends Enum<E> & RobotSegment<E>>  im
 	public SegmentDependentList<E, List<Tuple2DBasics>> getControllerContactPoints(double footLength, double footWidth, double toeWidth) {
 		SegmentDependentList<E, List<Tuple2DBasics>> ret = new SegmentDependentList<>(robotSegments[0].getClassType());
 
+		footLength = footLength*0.75; //now foot surface is only  3/4th of foot length
+		
 		for (E segment : robotSegments)
 		{
 			ArrayList<Tuple2DBasics> contactPoints = new ArrayList<>();
@@ -129,17 +131,20 @@ public class CustomFootToeContactPoints<E extends Enum<E> & RobotSegment<E>>  im
 	public SegmentDependentList<E, Tuple2DBasics> getToeOffContactPoints(double footLength, double footWidth, double toeWidth) {
 		SegmentDependentList<E, Tuple2DBasics> ret = new SegmentDependentList<>(robotSegments[0].getClassType());
 
+		footLength = footLength*0.75; // toe-off contact point added at toe joint
+		
 		for (E segment : robotSegments)
-			ret.put(segment, new Point2D(0.75*footLength / 2.0, 0.0));
+			ret.put(segment, new Point2D(footLength / 2.0, 0.0)); 
 
-		System.out.println("toe contact points ");
+		System.out.println("toe contact points "+ret);
 		return ret;
 	}
 	@Override
 	public SegmentDependentList<E, LineSegment2D> getToeOffContactLines(double footLength, double footWidth, double toeWidth) {
 		SegmentDependentList<E, LineSegment2D> ret = new SegmentDependentList<>(robotSegments[0].getClassType());
 
-		double footForward = footLength / 2.0;
+		footLength = footLength*0.75; // toe-off contact line added at toe joint
+		double footForward = footLength / 2.0; 
 		double halfToeWidth = toeWidth / 2.0;
 
 		for (E segment : robotSegments)

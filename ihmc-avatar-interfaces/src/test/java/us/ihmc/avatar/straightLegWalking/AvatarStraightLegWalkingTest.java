@@ -766,7 +766,7 @@ public abstract class AvatarStraightLegWalkingTest implements MultiRobotTestInte
 
 		boolean success = drcSimulationTestHelper.simulateAndBlockAndCatchExceptions(0.001);
 
-		int numberOfSteps = 50;
+		int numberOfSteps = 6;
 		double stepLength = 0.5;
 		double transferDuration = 0.25;
 		double swingDuration = 0.70;
