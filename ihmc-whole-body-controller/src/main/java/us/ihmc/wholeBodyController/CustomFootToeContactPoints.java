@@ -64,18 +64,20 @@ public class CustomFootToeContactPoints<E extends Enum<E> & RobotSegment<E>>  im
 				}
 			}
 
-			ret.put(parentJointName, footContactPoints);
+//			ret.put(parentJointName, footContactPoints);
 		}
 		// adding extra contact points (temporary hack)
 		ArrayList<Tuple3DBasics> toeExtraContactPoints = new ArrayList<>();
+		ArrayList<Tuple3DBasics> footExtraContactPoints = new ArrayList<>();
+		
 
 		// these are the six points around the toe. (already transformed)
 
 		// behind the toe joint
 //		toeExtraContactPoints.add(new Point3D(-0.04, -0.043, -0.032));
 //		toeExtraContactPoints.add(new Point3D(-0.04, 0.043, -0.032));       
-//
-//		// right ahead the toe joint
+
+		// right ahead the toe joint
 //		toeExtraContactPoints.add(new Point3D(0.04, -0.043, -0.032));
 //		toeExtraContactPoints.add(new Point3D(0.04, 0.043, -0.032));
 
@@ -83,6 +85,21 @@ public class CustomFootToeContactPoints<E extends Enum<E> & RobotSegment<E>>  im
 //		toeExtraContactPoints.add(new Point3D( 0.126, -0.043, -0.032 ));
 //		toeExtraContactPoints.add(new Point3D( 0.126, 0.043, -0.032 ));
 
+		footExtraContactPoints.add(new Point3D(-0.086, -0.056, -0.084));
+		footExtraContactPoints.add(new Point3D(-0.086, 0.056, -0.084));
+		
+		footExtraContactPoints.add(new Point3D(0.09, -0.056, -0.084));
+		footExtraContactPoints.add(new Point3D(0.09, 0.056, -0.084));
+		
+		toeExtraContactPoints.add(new Point3D( 0.01, -0.043, -0.032 ));
+		toeExtraContactPoints.add(new Point3D( 0.01, 0.043, -0.032 ));
+		
+		toeExtraContactPoints.add(new Point3D( 0.04, -0.043, -0.032 ));
+		toeExtraContactPoints.add(new Point3D( 0.04, 0.043, -0.032 ));
+		
+		ret.put("l_leg_akx",footExtraContactPoints);
+		ret.put("r_leg_akx",footExtraContactPoints);
+		
 		ret.put("l_leg_toe",toeExtraContactPoints);
 		ret.put("r_leg_toe",toeExtraContactPoints);
 
@@ -101,9 +118,11 @@ public class CustomFootToeContactPoints<E extends Enum<E> & RobotSegment<E>>  im
 			contactPoints.add(new Point2D(-footLength / 2.0, footWidth / 2.0));
 			contactPoints.add(new Point2D(footLength / 2.0, -toeWidth / 2.0));
 			contactPoints.add(new Point2D(footLength / 2.0, toeWidth / 2.0));
+						
 			ret.put(segment, contactPoints);
 		}
 
+		System.out.println("controlContactPoints"+ret);
 		return ret;
 	}
 	@Override
@@ -111,8 +130,9 @@ public class CustomFootToeContactPoints<E extends Enum<E> & RobotSegment<E>>  im
 		SegmentDependentList<E, Tuple2DBasics> ret = new SegmentDependentList<>(robotSegments[0].getClassType());
 
 		for (E segment : robotSegments)
-			ret.put(segment, new Point2D(footLength / 2.0, 0.0));
+			ret.put(segment, new Point2D(0.75*footLength / 2.0, 0.0));
 
+		System.out.println("toe contact points ");
 		return ret;
 	}
 	@Override
