@@ -223,6 +223,19 @@ public class AtlasToeRobotModel extends AtlasRobotModel {
 	      {
 	         return -0.75;
 	      }
+	      
+	      @Override
+	      public boolean useToeOffLineContactInTransfer()
+	      {
+	         return false; // default : false
+	      }
+	      
+	      @Override
+	      public boolean useToeOffLineContactInSwing()
+	      {
+	         return true; // default : true
+	      }
+
 	   }
 
 	   private class TestSwingTrajectoryParameters extends AtlasSwingTrajectoryParameters
@@ -327,6 +340,12 @@ public class AtlasToeRobotModel extends AtlasRobotModel {
 	      public double getLegPrivilegedHighWeight()
 	      {
 	         return 150.0;
+	      }
+	      
+	      @Override
+	      public boolean toeOffWhenCollapsed()
+	      {
+	    	 return true; 
 	      }
 	   }
 

@@ -105,6 +105,20 @@ public class LegConfigurationParameters
    {
       return false;
    }
+   
+   /**
+    * Determines whether to toe-off when leg configuration is collapsed.
+    * During normal walking, heel rise from foot flat has a considerable role in raising the height of the COM when it 
+    * is at its lowest, thus reducing its overall displacement. In so far as reduction of COM vertical displacement may 
+    * have important energy implications, appreciating the specific gait parameter of heel  rise  is  key  in  
+    * rehabilitative  approaches  to  improve  gait disability.
+    * Experimental feature. Use only if using toe joint model. Currently not handled for model without toe joint.
+    * @return boolean (true = toe-off when collapsed, false = do not toe-off when collapsed)
+    */
+   public boolean toeOffWhenCollapsed()
+   {
+      return false;
+   }
 
    /**
     * These are the configuration gain used to control the knee privileged joint accelerations or privileged joint velocities
