@@ -2,6 +2,8 @@ package us.ihmc.atlas;
 
 import java.util.EnumMap;
 
+import javax.annotation.OverridingMethodsMustInvokeSuper;
+
 import us.ihmc.atlas.initialSetup.AtlasSimInitialSetup;
 import us.ihmc.atlas.parameters.AtlasContactPointParameters;
 import us.ihmc.atlas.parameters.AtlasContinuousCMPPlannerParameters;
@@ -347,6 +349,37 @@ public class AtlasToeRobotModel extends AtlasRobotModel {
 	      {
 	    	 return true; 
 	      }
+	      
+	      @Override
+	      public double getKneeAngleWhenStraight()
+	      {
+	         return 0.02;
+	      }
+	      
+	      @Override
+	      public double getKneeAngleWhenBracing()
+	      {
+	         return 0.4;
+	      }
+
+	      @Override
+	      public double getKneeAngleWhenExtended()
+	      {
+	         return 0.0;
+	      }
+	      
+	      @Override
+	      public double getDesiredFractionOfMidrangeForCollapsedAngle()
+	      {
+	         return 0.3;
+	      }
+	      
+	      @Override
+	      public double getSupportKneeCollapsingDurationFractionOfStep()
+	      {
+	         return 0.5;
+	      }
+	      
 	   }
 
 	   private class TestMomentumOptimizationSettings extends AtlasMomentumOptimizationSettings
@@ -374,7 +407,7 @@ public class AtlasToeRobotModel extends AtlasRobotModel {
 	      @Override
 	      public double getExitCoPForwardSafetyMarginOnToes()
 	      {
-	         return 0.015;
+	         return 0.015; // 0.055
 	      }
 
 	      @Override

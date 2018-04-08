@@ -8,6 +8,7 @@ import us.ihmc.euclid.referenceFrame.FramePoint3D;
 import us.ihmc.euclid.referenceFrame.ReferenceFrame;
 import us.ihmc.robotModels.FullHumanoidRobotModel;
 import us.ihmc.robotics.InterpolationTools;
+import us.ihmc.robotics.math.trajectories.YoMinimumJerkTrajectory;
 import us.ihmc.commons.MathTools;
 import us.ihmc.yoVariables.registry.YoVariableRegistry;
 import us.ihmc.yoVariables.variable.YoBoolean;
@@ -73,7 +74,10 @@ public class LegConfigurationControlModule
 
 	private final YoDouble kneePitchPrivilegedConfiguration;
 	private final YoDouble kneePitchPrivilegedError;
+	private final YoDouble toePitchPrivilegedConfiguration;
 	private final YoDouble toePitchPrivilegedError;
+	private final YoDouble anklePitchPrivilegedConfiguration;
+	private final YoDouble anklePitchPrivilegedError;
 
 	private final YoDouble kneePrivilegedPAction;
 	private final YoDouble kneePrivilegedDAction;
@@ -105,6 +109,7 @@ public class LegConfigurationControlModule
 
 	private final OneDoFJoint kneePitchJoint;
 	private final OneDoFJoint toePitchJoint;
+	private final OneDoFJoint anklePitchJoint;
 
 	private final YoDouble positionBlendingFactor;
 	private final YoDouble velocityBlendingFactor;
@@ -137,6 +142,12 @@ public class LegConfigurationControlModule
 
 	private final LegConfigurationGains straightLegGains;
 	private final LegConfigurationGains bentLegGains;
+	
+	private YoMinimumJerkTrajectory trajectoryToePitch;
+	private YoMinimumJerkTrajectory trajectoryAnklePitch;
+	
+	private final YoDouble anklePitchPrivilegedAcceleration;
+	private final YoDouble toePitchPrivilegedAcceleration;
 
 
 
@@ -149,6 +160,7 @@ public class LegConfigurationControlModule
 
 		kneePitchJoint = controllerToolbox.getFullRobotModel().getLegJoint(robotSide, LegJointName.KNEE_PITCH);
 		toePitchJoint = controllerToolbox.getFullRobotModel().getLegJoint(robotSide, LegJointName.TOE_PITCH);
+		anklePitchJoint = controllerToolbox.getFullRobotModel().getLegJoint(robotSide, LegJointName.ANKLE_PITCH);
 
 		double kneeLimitUpper = kneePitchJoint.getJointLimitUpper();
 		if (Double.isNaN(kneeLimitUpper) || Double.isInfinite(kneeLimitUpper))
@@ -164,7 +176,6 @@ public class LegConfigurationControlModule
 		toeOffWhenCollapsed.set(legConfigurationParameters.toeOffWhenCollapsed());
 
 		OneDoFJoint hipPitchJoint = controllerToolbox.getFullRobotModel().getLegJoint(robotSide, LegJointName.HIP_PITCH);
-		OneDoFJoint anklePitchJoint = controllerToolbox.getFullRobotModel().getLegJoint(robotSide, LegJointName.ANKLE_PITCH);
 		privilegedAccelerationCommand.addJoint(hipPitchJoint, Double.NaN);
 		privilegedAccelerationCommand.addJoint(kneePitchJoint, Double.NaN);
 		privilegedAccelerationCommand.addJoint(anklePitchJoint, Double.NaN);
@@ -173,14 +184,28 @@ public class LegConfigurationControlModule
 		{
 			privilegedAccelerationCommand.addJoint(toePitchJoint, Double.NaN);
 			toePitchPrivilegedError = new YoDouble(sidePrefix + "ToePitchPrivilegedError", registry);
+			toePitchPrivilegedConfiguration = new YoDouble(sidePrefix + "ToePitchPrivilegedConfiguration", registry);
+			anklePitchPrivilegedError = new YoDouble(sidePrefix + "AnklePitchPrivilegedError", registry);
+			anklePitchPrivilegedConfiguration = new YoDouble(sidePrefix + "AnklePitchPrivilegedConfiguration", registry);
 			toePrivilegedPAction = new YoDouble(sidePrefix + "ToePrivilegedPAction", registry);
 			toePrivilegedDAction = new YoDouble(sidePrefix + "ToePrivilegedDAction", registry);
+			anklePitchPrivilegedAcceleration =  new YoDouble(sidePrefix + "AnklePitchPrivilegedAcceleration", registry);
+			toePitchPrivilegedAcceleration =  new YoDouble(sidePrefix + "ToePitchPrivilegedAcceleration", registry);
+			trajectoryToePitch = new YoMinimumJerkTrajectory("TrajectoryToePitch", registry);
+			trajectoryAnklePitch = new YoMinimumJerkTrajectory("TrajectoryAnklePitch", registry);
 		}
 		else 
 		{
 			toePitchPrivilegedError = null;
 			toePrivilegedPAction = null;
 			toePrivilegedDAction = null;
+			toePitchPrivilegedConfiguration = null;
+			anklePitchPrivilegedConfiguration = null;
+			anklePitchPrivilegedError = null;
+			trajectoryToePitch = null;
+			trajectoryAnklePitch = null;
+			anklePitchPrivilegedAcceleration = null;
+			toePitchPrivilegedAcceleration = null;
 		} 
 
 		highPrivilegedWeight = new YoDouble(sidePrefix + "HighPrivilegedWeight", registry);
@@ -377,26 +402,39 @@ public class LegConfigurationControlModule
 
 		if(toeOffWhenCollapsed.getBooleanValue())
 		{
-			//    	  privilegedAccelerationCommand.setWeight(toePitchJointIndex, kneePitchPrivilegedConfigurationWeight);
-			//    	  
-			//    	  if(stateMachine.getCurrentState().getStateEnum() == LegConfigurationType.COLLAPSE)
-			//    	  {	  
-			//    		  privilegedAccelerationCommand.setOneDoFJoint(toePitchJointIndex, privilegedAnklePitchAcceleration);
-			//    	  }
-			//    	  else
-			//    	  {
-			//    		  double privilegedtoePitchAcceleration = computeToeAcceleration();
-			//    		  privilegedAccelerationCommand.setOneDoFJoint(toePitchJointIndex, privilegedtoePitchAcceleration);
-			//    	  }
+			
+			double privilegedtoePitchAcceleration = computeToeAcceleration(0.0);
+			
+			if(stateMachine.getCurrentState().getStateEnum() == LegConfigurationType.STRAIGHTEN)
+			{	  
+				privilegedtoePitchAcceleration = computeToeAcceleration(0.0); 
+				privilegedAccelerationCommand.setWeight(toePitchJointIndex, highPrivilegedWeight.getDoubleValue()+300.0);
+			}
+			else if(stateMachine.getCurrentState().getStateEnum() == LegConfigurationType.STRAIGHT)
+			{	  
+				privilegedtoePitchAcceleration = computeToeAcceleration(0.0); 
+				privilegedAccelerationCommand.setWeight(toePitchJointIndex, highPrivilegedWeight.getDoubleValue());
+			}
+			else if(stateMachine.getCurrentState().getStateEnum() == LegConfigurationType.COLLAPSE)
+			{	  
+				privilegedtoePitchAcceleration = computeToeAcceleration(0.0); 
+				privilegedAccelerationCommand.setWeight(toePitchJointIndex, mediumPrivilegedWeight.getDoubleValue());
+			}
+			else if(stateMachine.getCurrentState().getStateEnum() == LegConfigurationType.BENT)
+			{	  
+				privilegedtoePitchAcceleration = computeToeAcceleration(0.0);
+				privilegedAccelerationCommand.setWeight(toePitchJointIndex, highPrivilegedWeight.getDoubleValue());
+			}
 
-			privilegedAccelerationCommand.setWeight(toePitchJointIndex, kneePitchPrivilegedConfigurationWeight);
-			privilegedAccelerationCommand.setOneDoFJoint(toePitchJointIndex, computeToeAcceleration(0.0));
+			privilegedAccelerationCommand.setOneDoFJoint(toePitchJointIndex, toePitchPrivilegedAcceleration.getDoubleValue());
+			
 
 		}
 	}
 
 	private double computeToeAcceleration(double desiredPosition)
 	{
+		toePitchPrivilegedConfiguration.set(desiredPosition);
 		double currentPosition = toePitchJoint.getQ();
 
 		double error = desiredPosition - currentPosition;
@@ -405,19 +443,44 @@ public class LegConfigurationControlModule
 		double toeRangeOfMotion = Math.PI/2;
 		double toeRangeOfMotionSquared = Math.pow(toeRangeOfMotion,2);
 
-		double jointSpaceKp = 2.0 * jointSpaceConfigurationGain / toeRangeOfMotionSquared;
+		double jointSpaceKp =  100.0*jointSpaceConfigurationGain / toeRangeOfMotionSquared;
 
 		double jointSpacePAction = jointSpaceKp * error;
 
-		double jointSpaceDAction = jointSpaceVelocityGain * -toePitchJoint.getQd();
+		double jointSpaceDAction = 10.0*jointSpaceVelocityGain * -toePitchJoint.getQd();
 
 		toePrivilegedPAction.set(jointSpacePAction);
 		toePrivilegedDAction.set(jointSpaceDAction);
+
+		toePitchPrivilegedAcceleration.set(MathTools.clamp(toePrivilegedPAction.getDoubleValue() + toePrivilegedDAction.getDoubleValue(), privilegedMaxAcceleration.getDoubleValue()));
 		
-		return MathTools.clamp(toePrivilegedPAction.getDoubleValue() + toePrivilegedDAction.getDoubleValue(), privilegedMaxAcceleration.getDoubleValue());
+		return toePitchPrivilegedAcceleration.getDoubleValue();
 
 	}
+	
+	private double computeAnklePitchAcceleration(double desiredPosition)
+	{
+		anklePitchPrivilegedConfiguration.set(desiredPosition);
+		double currentPosition = anklePitchJoint.getQ();
 
+		double error = desiredPosition - currentPosition;
+		anklePitchPrivilegedError.set(error);
+
+		double ankleRangeOfMotion = Math.PI/2;
+		double ankleRangeOfMotionSquared = Math.pow(ankleRangeOfMotion,2);
+
+		double jointSpaceKp = 2.0 * jointSpaceConfigurationGain / ankleRangeOfMotionSquared;
+
+		double jointSpacePAction = jointSpaceKp * error;
+
+		double jointSpaceDAction = jointSpaceVelocityGain * -anklePitchJoint.getQd();
+
+		anklePitchPrivilegedAcceleration.set(MathTools.clamp(jointSpacePAction + jointSpaceDAction, privilegedMaxAcceleration.getDoubleValue()));
+		
+		return anklePitchPrivilegedAcceleration.getDoubleValue();
+
+	}
+	
 	public void setStepDuration(double stepDuration)
 	{
 		collapsingDuration.set(collapsingDurationFractionOfStep.getDoubleValue() * stepDuration);
@@ -755,6 +818,7 @@ public class LegConfigurationControlModule
 
 			blendPositionError = bentLegGains.getBlendPositionError();
 			blendVelocityError = bentLegGains.getBlendVelocityError();
+			
 		}
 
 		@Override

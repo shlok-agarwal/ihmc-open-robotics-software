@@ -57,6 +57,7 @@ public class SupportState extends AbstractFootControlState
    private final FootSwitchInterface footSwitch;
 
    private final PoseReferenceFrame controlFrame;
+   private final PoseReferenceFrame extraControlFrame;
    private final PoseReferenceFrame desiredSoleFrame;
    private final YoGraphicReferenceFrame frameViz;
 
@@ -64,11 +65,14 @@ public class SupportState extends AbstractFootControlState
    private final SpatialAccelerationCommand spatialAccelerationCommand = new SpatialAccelerationCommand();
    private final SpatialFeedbackControlCommand spatialFeedbackControlCommand = new SpatialFeedbackControlCommand();
 
+   private final SpatialAccelerationCommand extraSpatialAccelerationCommand = new SpatialAccelerationCommand();
+
    private final SelectionMatrix6D accelerationSelectionMatrix = new SelectionMatrix6D();
    private final SelectionMatrix6D feedbackSelectionMatrix = new SelectionMatrix6D();
 
    private final FramePoint2D cop2d = new FramePoint2D();
    private final FramePoint3D framePosition = new FramePoint3D();
+   private final FramePoint3D heelFramePosition = new FramePoint3D();
    private final FrameQuaternion frameOrientation = new FrameQuaternion();
    private final FramePose3D bodyFixedControlledPose = new FramePose3D();
    private final FramePoint3D desiredCopPosition = new FramePoint3D();
@@ -121,6 +125,7 @@ public class SupportState extends AbstractFootControlState
 
       footSwitch = footControlHelper.getHighLevelHumanoidControllerToolbox().getFootSwitches().get(robotSide);
       controlFrame = new PoseReferenceFrame(prefix + "HoldPositionFrame", contactableFoot.getSoleFrame());
+      extraControlFrame = new PoseReferenceFrame(prefix + "AdditionalHoldPositionFrame", contactableFoot.getSoleFrame());
       desiredSoleFrame = new PoseReferenceFrame(prefix + "DesiredSoleFrame", worldFrame);
 
       footBarelyLoaded = new YoBoolean(prefix + "BarelyLoaded", registry);
@@ -141,11 +146,15 @@ public class SupportState extends AbstractFootControlState
       spatialAccelerationCommand.setWeight(SolverWeightLevels.FOOT_SUPPORT_WEIGHT);
       spatialAccelerationCommand.set(rootBody, contactableFoot.getRigidBody());
       spatialAccelerationCommand.setPrimaryBase(pelvis);
+      
+      extraSpatialAccelerationCommand.setWeight(SolverWeightLevels.HIGH);
+      extraSpatialAccelerationCommand.set(rootBody, contactableFoot.getRigidBody());
+      extraSpatialAccelerationCommand.setPrimaryBase(pelvis);
 
       spatialFeedbackControlCommand.setWeightForSolver(SolverWeightLevels.FOOT_SUPPORT_WEIGHT);
       spatialFeedbackControlCommand.set(rootBody, contactableFoot.getRigidBody());
       spatialFeedbackControlCommand.setPrimaryBase(pelvis);
-
+    
       desiredLinearVelocity.setToZero(worldFrame);
       desiredAngularVelocity.setToZero(worldFrame);
       desiredLinearAcceleration.setToZero(worldFrame);
@@ -281,15 +290,28 @@ public class SupportState extends AbstractFootControlState
       if (cop2d.containsNaN())
          cop2d.setToZero(contactableFoot.getSoleFrame());
       framePosition.setIncludingFrame(cop2d, 0.0);
+      
+//      heelFramePosition.setReferenceFrame(cop2d.getReferenceFrame());
+//      heelFramePosition.setX(0.0);
+//      heelFramePosition.setY(0.0);
+//      heelFramePosition.setZ(0.0);
+      
       frameOrientation.setToZero(contactableFoot.getSoleFrame());
       controlFrame.setPoseAndUpdate(framePosition, frameOrientation);
+      extraControlFrame.setPoseAndUpdate(framePosition, frameOrientation);
 
       // assemble acceleration command
       ReferenceFrame bodyFixedFrame = contactableFoot.getRigidBody().getBodyFixedFrame();
       footAcceleration.setToZero(bodyFixedFrame, rootBody.getBodyFixedFrame(), controlFrame);
       footAcceleration.changeBodyFrameNoRelativeAcceleration(bodyFixedFrame);
       spatialAccelerationCommand.setSpatialAcceleration(controlFrame, footAcceleration);
+      
+      footAcceleration.setToZero(bodyFixedFrame, rootBody.getBodyFixedFrame(), extraControlFrame);
+      footAcceleration.changeBodyFrameNoRelativeAcceleration(bodyFixedFrame);
+      extraSpatialAccelerationCommand.setSpatialAcceleration(extraControlFrame, footAcceleration);
+      
       spatialAccelerationCommand.setWeights(angularWeight, linearWeight);
+      extraSpatialAccelerationCommand.setWeights(angularWeight, linearWeight);
 
       // assemble feedback command
       bodyFixedControlledPose.setToZero(controlFrame);
@@ -302,7 +324,7 @@ public class SupportState extends AbstractFootControlState
       spatialFeedbackControlCommand.set(desiredOrientation, desiredAngularVelocity, desiredAngularAcceleration);
       spatialFeedbackControlCommand.setWeightsForSolver(angularWeight, linearWeight);
       spatialFeedbackControlCommand.setGains(gains);
-
+      
       // set selection matrices
       accelerationSelectionMatrix.resetSelection();
       feedbackSelectionMatrix.resetSelection();
@@ -331,6 +353,7 @@ public class SupportState extends AbstractFootControlState
       }
 
       spatialAccelerationCommand.setSelectionMatrix(accelerationSelectionMatrix);
+      extraSpatialAccelerationCommand.setSelectionMatrix(accelerationSelectionMatrix);
       spatialFeedbackControlCommand.setSelectionMatrix(feedbackSelectionMatrix);
 
       // update visualization
@@ -345,6 +368,7 @@ public class SupportState extends AbstractFootControlState
       for (int i = 0; i < contactableFoot.getTotalNumberOfContactPoints(); i++)
          footPolygon.addVertex(contactableFoot.getContactPoints2d().get(i));
       footPolygon.update();
+      
    }
 
    private void updateHoldPositionSetpoints()
@@ -396,6 +420,7 @@ public class SupportState extends AbstractFootControlState
    {
       inverseDynamicsCommandsList.clear();
       inverseDynamicsCommandsList.addCommand(spatialAccelerationCommand);
+//      inverseDynamicsCommandsList.addCommand(extraSpatialAccelerationCommand);
       inverseDynamicsCommandsList.addCommand(explorationHelper.getCommand());
 
       return inverseDynamicsCommandsList;

@@ -306,6 +306,7 @@ public class AtlasStraightLegWalkingTest extends AvatarStraightLegWalkingTest
       {
          return true;
       }
+      
    }
 
    private class TestLeapOfFaithParameters extends LeapOfFaithParameters
@@ -371,6 +372,13 @@ public class AtlasStraightLegWalkingTest extends AvatarStraightLegWalkingTest
       {
          return 150.0;
       }
+      
+//      @Override
+//      public double getKneeAngleWhenStraight()
+//      {
+//         return 0.02;
+//      }
+      
    }
 
    private class TestMomentumOptimizationSettings extends AtlasMomentumOptimizationSettings
@@ -425,5 +433,6 @@ public class AtlasStraightLegWalkingTest extends AvatarStraightLegWalkingTest
    {
       AtlasStraightLegWalkingTest test = new AtlasStraightLegWalkingTest();
       test.testCustomSteps();
+//      test.testWalkingOverCinderBlockField();
    }
 }

@@ -111,6 +111,8 @@ public class AtlasToeModelWalkingTest extends AvatarStraightLegWalkingTest {
 	{
 		AtlasToeModelWalkingTest test = new AtlasToeModelWalkingTest();
 		test.testCustomSteps();
+//		test.testWalkingOverCinderBlockField();
+		
 	}
 
 }

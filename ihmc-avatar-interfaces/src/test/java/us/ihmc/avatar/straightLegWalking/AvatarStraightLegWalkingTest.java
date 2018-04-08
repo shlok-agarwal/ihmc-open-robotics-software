@@ -542,17 +542,24 @@ public abstract class AvatarStraightLegWalkingTest implements MultiRobotTestInte
 		int indexForRightSide = indexForLeftSide + 1;
 		SideDependentList<List<FramePose3D>> columns = extractColumns(cinderBlockPoses, indexForLeftSide, indexForRightSide);
 
-		for (int row = 0; row < cinderBlockPoses.size(); row++)
+		for (int row = 0; row < 5; row++)
 		{
 			for (RobotSide robotSide : RobotSide.values)
 			{
-				FramePose3D cinderBlockPose = columns.get(robotSide).get(row);
-				Point3D location = new Point3D();
-				Quaternion orientation = new Quaternion();
-				cinderBlockPose.get(location, orientation);
-				location.setZ(location.getZ() + 0.02);
-				FootstepDataMessage footstep = HumanoidMessageTools.createFootstepDataMessage(robotSide, location, orientation);
-				footsteps.add(footstep);
+				if(row ==4 && robotSide == RobotSide.RIGHT)
+				{
+					
+				}
+				else
+				{
+					FramePose3D cinderBlockPose = columns.get(robotSide).get(row);
+					Point3D location = new Point3D();
+					Quaternion orientation = new Quaternion();
+					cinderBlockPose.get(location, orientation);
+					location.setZ(location.getZ() + 0.02);
+					FootstepDataMessage footstep = HumanoidMessageTools.createFootstepDataMessage(robotSide, location, orientation);
+					footsteps.add(footstep);
+				}
 			}
 		}
 
@@ -766,11 +773,11 @@ public abstract class AvatarStraightLegWalkingTest implements MultiRobotTestInte
 
 		boolean success = drcSimulationTestHelper.simulateAndBlockAndCatchExceptions(0.001);
 
-		int numberOfSteps = 6;
-		double stepLength = 0.5;
+		int numberOfSteps = 5;
+		double stepLength = 0.50;
 		double transferDuration = 0.25;
 		double swingDuration = 0.70;
-		double swingHeight = 0.1;
+		double swingHeight = 0.15; // 0.10
 
 		FullHumanoidRobotModel fullRobotModel = drcSimulationTestHelper.getControllerFullRobotModel();
 
