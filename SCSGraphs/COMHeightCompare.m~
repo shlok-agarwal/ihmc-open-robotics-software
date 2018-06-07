@@ -1,0 +1,23 @@
+clear all ;
+clc;
+close all;
+
+base_file = 'AtlasBaseCOMHeightCompare.mat';
+toe_file = 'AtlasToeCOMHeightCompare.mat';
+
+toe_height = load(toe_file,'q_z');
+base_height = load(base_file,'q_z');
+
+base_l_start_bend = load(base_file,'q_z');
+
+plot(base_height.q_z, 'b');
+hold on;
+plot(toe_height.q_z, 'r');
+hold off;
+title('COM Height');
+
+fprintf('mean of base is %d \n',mean(base_height.q_z));
+fprintf('mean of toe is %d',mean(toe_height.q_z));
+
+fprintf('Variance of base is %d',var(base_height.q_z));
+fprintf('Variance of toe is %d',var(toe_height.q_z));
