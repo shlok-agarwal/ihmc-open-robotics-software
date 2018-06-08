@@ -84,16 +84,30 @@ clc;
 % toe_file_4 = 'AtlasToeFinal_05_075_4.mat';
 %% 5 Steps at 0.75 polygon with new mass
 
-base_file = 'AtlasBaseForwardPushAnalysis5Steps.mat';
+% base_file = 'AtlasBaseForwardPushAnalysis5Steps.mat';
+% toe_file = 'AtlasToeFinal_05_075_change.mat';
+% 
+% base_file_2 = 'AtlasBaseForwardPushAnalysis5Steps_2.mat';
+% toe_file_2 = 'AtlasToeFinal_05_075_change_2.mat';
+% 
+% base_file_3 = 'AtlasBaseForwardPushAnalysis5Steps_3.mat';
+% toe_file_3 = 'AtlasToeFinal_05_075_change_3.mat';
+% 
+% base_file_4 = 'AtlasBaseForwardPushAnalysis5Steps_4.mat';
+% toe_file_4 = 'AtlasToeFinal_05_075_change_4.mat';
+
+%% 5 Steps at 0.75 polygon for both BASE AND TOE with new mass
+
+base_file = 'AtlasBaseFinal_05_075_change.mat';
 toe_file = 'AtlasToeFinal_05_075_change.mat';
 
-base_file_2 = 'AtlasBaseForwardPushAnalysis5Steps_2.mat';
+base_file_2 = 'AtlasBaseFinal_05_075_change_2.mat';
 toe_file_2 = 'AtlasToeFinal_05_075_change_2.mat';
 
-base_file_3 = 'AtlasBaseForwardPushAnalysis5Steps_3.mat';
+base_file_3 = 'AtlasBaseFinal_05_075_change_3.mat';
 toe_file_3 = 'AtlasToeFinal_05_075_change_3.mat';
 
-base_file_4 = 'AtlasBaseForwardPushAnalysis5Steps_4.mat';
+base_file_4 = 'AtlasBaseFinal_05_075_change_4.mat';
 toe_file_4 = 'AtlasToeFinal_05_075_change_4.mat';
 %% 5 Steps at 0.80 polygon
 % 
